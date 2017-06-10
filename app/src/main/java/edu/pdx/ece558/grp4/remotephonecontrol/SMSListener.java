@@ -71,7 +71,6 @@ public class SMSListener extends Service {
             final Bundle bundle = intent.getExtras();
 
             try {
-                // test ccomment
                 if (bundle != null) {
 
                     final Object[] pdusObj = (Object[]) bundle.get("pdus");
