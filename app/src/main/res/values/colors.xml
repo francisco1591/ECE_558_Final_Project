@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+
+    <!--E20049 = red-->
+    <!--7C064D = purple-->
+    <!--F79F24 = gold-->
+    <!--FFEED0 = white-->
+
+    <color name="colorPrimary">#F79F24</color>
+    <color name="colorPrimaryDark">#7C064D</color>
+    <color name="colorAccent">#FF847C</color>
+    <color name="colorText">#E20049</color>
+    <color name="colorTextPrimary">#E20049</color>
+    <color name="colorTextSecondary">#F79F24</color>
+    <color name="colorBackground">#FFEED0</color>
+    <color name="colorButton">#F79F24</color>
+    <color name="colorHint">#7C064D</color>
+
 </resources>

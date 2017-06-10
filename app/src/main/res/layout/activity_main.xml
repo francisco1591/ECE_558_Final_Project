@@ -1,27 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="MainActivity">
-
-
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start Listening"
-        android:id="@+id/btnStart"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="48dp" />
+                tools:context="MainActivity"
+                android:gravity="center"
+                android:orientation="vertical">
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Stop Listening"
+        android:text="@string/button_start_listen"
+        android:id="@+id/btnStart" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_stop_listen"
         android:id="@+id/btnStop"
-        android:layout_below="@+id/btnStart"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="48dp" />
+        android:layout_marginBottom="36dp"/>
 
-</RelativeLayout>
+    <ToggleButton
+        android:id="@+id/toggle_SMS"
+        android:textOn="@string/enabled_SMS"
+        android:textOff="@string/disabled_SMS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ToggleButton
+        android:id="@+id/toggle_email"
+        android:textOn="@string/enabled_email"
+        android:textOff="@string/disabled_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="36dp"/>
+
+    <ToggleButton
+        android:id="@+id/toggle_location"
+        android:textOn="@string/enabled_location"
+        android:textOff="@string/disabled_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

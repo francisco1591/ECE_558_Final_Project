@@ -3,9 +3,34 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
+
+        <!--Color of the banner outside app-->
         <item name="colorPrimary">@color/colorPrimary</item>
+
+        <!--Color of the top banner inside app-->
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+
+        <!--Color of the radio buttons-->
         <item name="colorAccent">@color/colorAccent</item>
+
+        <!--Color of the text for radio buttons, question string-->
+        <item name="android:textColor">@color/colorText</item>
+
+        <!--Main color of the app's text-->
+        <item name="android:textColorPrimary">@color/colorTextPrimary</item>
+
+        <!--Secondary color of the app's text-->
+        <item name="android:textColorSecondary">@color/colorTextSecondary</item>
+
+        <!--Background color of the app-->
+        <item name="android:colorBackground">@color/colorBackground</item>
+
+        <!--Button color-->
+        <item name="android:colorButtonNormal">@color/colorButton</item>
+
+        <!--Hint color-->
+        <item name="android:textColorHint">@color/colorHint</item>
+
     </style>
 
 </resources>

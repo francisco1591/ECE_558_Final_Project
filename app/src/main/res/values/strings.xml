@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">RemotePhoneControl</string>
+
+    <string name="button_start_listen">Start Listening</string>
+    <string name="button_stop_listen">Stop Listening</string>
+
+    <string name="enabled_SMS">SMS Control Enaabled</string>
+    <string name="disabled_SMS">SMS Control Disabled</string>
+
+    <string name="enabled_email">Email Control Enabled</string>
+    <string name="disabled_email">Email Control Disabled</string>
+
+    <string name="enabled_location">Location Enabled</string>
+    <string name="disabled_location">Location Disabled</string>
+
 </resources>
