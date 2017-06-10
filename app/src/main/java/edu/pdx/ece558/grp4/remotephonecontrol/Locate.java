@@ -20,7 +20,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+// Rehan adding a test comment for pushing demo
 public class Locate {
     private static final String TAG ="LocateClass";
     private double LocTimeOut = 15e3; //location timeout ms
