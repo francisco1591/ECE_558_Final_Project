@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnStop;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         getSMSpermissions();
         getLocationPermission();
 
+        //TODO Add user interface to configure app
         btnStart = (Button) findViewById(R.id.btnStart);
         btnStart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {

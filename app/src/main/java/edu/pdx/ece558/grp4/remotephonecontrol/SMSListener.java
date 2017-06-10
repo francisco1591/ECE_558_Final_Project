@@ -30,25 +30,25 @@ public class SMSListener extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Let it continue running until it is stopped.
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
-        go = true;
-        Thread thread = new Thread() {
-            public void run () {
-                long count = 0;
-                String s;
-                while (go){
-                    try {
-                        Thread.sleep(1000);
-                        count++;
-                        s = "Service running for "+count+" seconds.";
-                        Log.d(TAG, s);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-        thread.start();
+//        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+//        go = true;
+//        Thread thread = new Thread() {
+//            public void run () {
+//                long count = 0;
+//                String s;
+//                while (go){
+//                    try {
+//                        Thread.sleep(1000);
+//                        count++;
+//                        s = "Service running for "+count+" seconds.";
+//                        Log.d(TAG, s);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        };
+//        thread.start();
 
         return START_STICKY;
     }
@@ -123,7 +123,7 @@ public class SMSListener extends Service {
         mailSender.start();
     }
     protected void sendSMSMessage() {
-        phoneNo = "8472196443";
+        phoneNo = "(847) 219-6443";
         message = "Quioboles que compita, a donde vas que más valgas";
 //        if (ContextCompat.checkSelfPermission(this,
 //                Manifest.permission.SEND_SMS)
