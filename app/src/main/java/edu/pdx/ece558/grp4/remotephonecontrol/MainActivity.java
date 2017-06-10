@@ -1,11 +1,12 @@
 package edu.pdx.ece558.grp4.remotephonecontrol;
 
+/////////////////////
+// Android Imports //
+/////////////////////
+
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
@@ -16,50 +17,129 @@ import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
+
+//////////////////
+// MainActivity //
+//////////////////
 
 public class MainActivity extends AppCompatActivity {
+
+    // Tag to identify this activity in logcat
     private static final String TAG = "RemotePhoneControl";
+
+    // File to save SharedPreferences in
+    public static final String PREFS_NAME ="RemotePhoneControl";
+
     private static final int REQUEST_SMS_PERMISSION = 0;
     private static final int REQUEST_SEND_SMS_PERMISSION = 1;
     private static final int REQUEST_FINE_LOCATION_PERMISSION = 2;
+
+    // Private members
+    boolean mSMSControl;
+    boolean mEmailControl;
+    boolean mRemoteLocation;
+
+    // UI Widgets
     Button btnStart;
     Button btnStop;
 
+    ToggleButton toggleSMS;
+    ToggleButton toggleEmail;
+    ToggleButton toggleLocation;
 
+    //////////////
+    // onCreate //
+    //////////////
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // get the permissions for SMS & GPS
         getSMSpermissions();
         getLocationPermission();
 
-        //TODO Add user interface to configure app
+        // Load the previous values for user preference...
+        // i.e. whether SMS control, email control, location are allowed
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+
+        mSMSControl = settings.getBoolean("SMSControl", false);
+        mEmailControl = settings.getBoolean("EmailControl", false);
+        mRemoteLocation = settings.getBoolean("RemoteLocation", false);
+
+        // Wire up the button to start service
         btnStart = (Button) findViewById(R.id.btnStart);
         btnStart.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View view) {
                 Intent intent = new Intent(getBaseContext(), SMSListener.class);
                 startService(intent);
-            }
-        });
+            } // onClick
 
+        }); // OnClickListener
+
+        // Wire up the button to stop service
         btnStop = (Button) findViewById(R.id.btnStop);
         btnStop.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View view) {
                 Intent intent = new Intent(getBaseContext(), SMSListener.class);
                 stopService(intent);
-            }
-        });
+            } // onClick
+
+        }); // OnClickListener
+
+        // Wire up the toggle to enable SMS control
+        toggleSMS = (ToggleButton) findViewById(R.id.toggle_SMS);
+        toggleSMS.setChecked(mSMSControl);
+        toggleSMS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) { mSMSControl = true; }
+                else { mSMSControl = false; }
+            } // onCheckedChanged
+
+        }); // onCheckedChangeListener
+
+        // Wire up the toggle to enable Email control
+        toggleEmail = (ToggleButton) findViewById(R.id.toggle_email);
+        toggleEmail.setChecked(mEmailControl);
+        toggleEmail.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) { mEmailControl = true; }
+                else { mEmailControl = false; }
+            } // onCheckedChanged
+
+        }); // OnCheckedChangeListener
+
+        // Wire up the toggle to enable Location reporting
+        toggleLocation = (ToggleButton) findViewById(R.id.toggle_location);
+        toggleLocation.setChecked(mRemoteLocation);
+        toggleLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) { mRemoteLocation = true; }
+                else { mRemoteLocation = false; }
+            } // onCheckedChanged
+
+        }); // OnCheckedChangeListener
 
 //        // Register receiver dynamically to access class instance members
 //        IntentFilter filter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
 //        registerReceiver(new ReceiveSMS(), filter);
-    }
+
+    } // onCreate
+
+    ///////////////////////
+    // getSMSpermissions //
+    ///////////////////////
 
     private void getSMSpermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
@@ -68,7 +148,11 @@ public class MainActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.SEND_SMS},
                     REQUEST_SMS_PERMISSION);
         }
-    }
+    } // getSMSpermissions
+
+    ////////////////////////////////
+    // onRequestPermissionsResult //
+    ////////////////////////////////
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -105,8 +189,13 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
             }
-        }
-    }
+
+        } // switch
+    } // onRequestPermissionsResult
+
+    ///////////////////////////
+    // getLocationPermission //
+    ///////////////////////////
 
     @TargetApi(23)
     public void getLocationPermission() {
@@ -115,13 +204,37 @@ public class MainActivity extends AppCompatActivity {
                     REQUEST_FINE_LOCATION_PERMISSION);
         }
 
-    }
+    } // getLocationPermission
+
+    ///////////////////////////////
+    // hasFineLocationPermission //
+    ///////////////////////////////
 
     /* Check for permissions to access fine location */
     private boolean hasFineLocationPermission () {
         int result = ContextCompat
                 .checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
         return result ==  PackageManager.PERMISSION_GRANTED;
+
+    } // hasFineLocationPermission
+
+    ////////////
+    // onStop //
+    ////////////
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.putBoolean("SMSControl", mSMSControl);
+        editor.putBoolean("EmailControl", mEmailControl);
+        editor.putBoolean("RemoteLocation", mRemoteLocation);
+
+        editor.commit();
+
     }
 
-}
+} // MainActivity
