@@ -1,5 +1,8 @@
 package edu.pdx.ece558.grp4.remotephonecontrol;
 
+// TODO : Need to terminate service, save preferences, restart service on slider change
+// TODO : Add 3 buttons (phone response, allow picture, play sound)
+
 /////////////////////
 // Android Imports //
 /////////////////////
@@ -33,6 +36,8 @@ public class MainActivity extends FragmentActivity
     private static final int REQUEST_SEND_SMS_PERMISSION = 1;
     private static final int REQUEST_FINE_LOCATION_PERMISSION = 2;
     private static final int REQUEST_CALL_PERMISSION = 3;
+    private static final int REQUEST_CAMERA_PERMISSION = 4;
+    private static final int REQUEST_EXT_STORAGE_PERMISSION = 5;
 
     // Private members
     boolean mSMSControl;
@@ -71,8 +76,11 @@ public class MainActivity extends FragmentActivity
 
         // get the permissions for SMS & GPS
         getSMSpermissions();
+
         //getLocationPermission();
         getCallPermission();
+
+        // 
 
         // Load the previous values for user preference...
         // i.e. whether SMS control, email control, location are allowed
@@ -256,6 +264,30 @@ public class MainActivity extends FragmentActivity
                 }
             }
 
+            case REQUEST_CAMERA_PERMISSION: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(),"Camera permission granted.",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            "Camera permission required, please try again.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+
+            case REQUEST_EXT_STORAGE_PERMISSION: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(),"External storage permission granted.",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            "External storage permission required, please try again.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+
         } // switch
     } // onRequestPermissionsResult
 
@@ -359,5 +391,29 @@ public class MainActivity extends FragmentActivity
     public void onEmailNegativeClick(DialogFragment dialog) {
         // TODO : Handle case when user hit the 'Cancel' button
     } // onEmailNegativeClick
+
+    /////////////////////////
+    // getCameraPermission //
+    /////////////////////////
+
+    protected void getCameraPermission(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},REQUEST_CAMERA_PERMISSION);
+        }
+    } // getCameraPermission
+
+    /////////////////////////////
+    // getExtStoragePermission //
+    /////////////////////////////
+
+    protected void getExtStoragePermission(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_EXT_STORAGE_PERMISSION);
+        }
+    } // getExtStoragePermission
 
 } // MainActivity

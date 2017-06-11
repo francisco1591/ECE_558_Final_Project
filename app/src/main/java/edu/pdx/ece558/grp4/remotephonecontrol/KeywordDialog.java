@@ -9,8 +9,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.widget.EditText;
+
 
 public class KeywordDialog extends DialogFragment {
+
+    // UI Widgets
+
+    EditText mEditTextKeyword;
 
     ////////////////////
     // onCreateDialog //
@@ -37,7 +43,7 @@ public class KeywordDialog extends DialogFragment {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    // TODO : Accept the keyword
+                    mListener.onKeywordPositiveClick(KeywordDialog.this);
                 } // onClick
             }) // setPositiveButton
 
@@ -46,7 +52,7 @@ public class KeywordDialog extends DialogFragment {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // TODO : Cancel the entry
+                        mListener.onKeywordNegativeClick(KeywordDialog.this);
                     } // onClick
                 }); // setNegativeButton
 
