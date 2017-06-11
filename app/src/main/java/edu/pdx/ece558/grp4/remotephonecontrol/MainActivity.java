@@ -41,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
     boolean mEmailResponse;
     boolean mRemoteLocation;
 
+    String mKeyword;
+    String mMyEmail;
+    String mPassword;
+
     // UI Widgets
 
     Button btnSetKeyword;
@@ -78,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
         mSMSControl = settings.getBoolean("SMSControl", false);
         mEmailResponse = settings.getBoolean("EmailControl", false);
         mRemoteLocation = settings.getBoolean("RemoteLocation", false);
+        mKeyword = settings.getString("Keyword", "");
+        mMyEmail = settings.getString("EmailAddress", "");
+        mPassword = settings.getString("Password", "");
 
         // Wire up the "Set Keyword" button
         btnSetKeyword = (Button) findViewById(R.id.btnKeyword);
@@ -147,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         textviewSyntax = (TextView) findViewById(R.id.textview_syntax);
 
         // Wire up the 'permissions' text (at bottom of app)
-        textviewPermission = (TextView) findViewById(R.id.textview_location);
+        textviewPermission = (TextView) findViewById(R.id.textview_permission);
 
         // Wire up the "SMS Control" text item
         textviewSMS = (TextView) findViewById(R.id.textview_SMS);
@@ -158,10 +165,11 @@ public class MainActivity extends AppCompatActivity {
                textviewSyntax.setText(getResources().getString(R.string.syntax_SMS));
                textviewPermission.setText(getResources().getString(R.string.permission_SMS));
            } // onClick
-        });
+
+        }); // setOnClickListener
 
         // Wire up the "Email Response" text item
-        textviewEmail = (TextView) findViewById(R.id.textview_SMS);
+        textviewEmail = (TextView) findViewById(R.id.textview_email);
         textviewEmail.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
@@ -169,11 +177,12 @@ public class MainActivity extends AppCompatActivity {
                 textviewSyntax.setText(getResources().getString(R.string.syntax_Email));
                 textviewPermission.setText(getResources().getString(R.string.permission_Email));
             } // onClick
-        });
+
+        }); // setOnClickListener
 
 
         // Wire up the "Remote Location" text item
-        textviewLocation = (TextView) findViewById(R.id.textview_SMS);
+        textviewLocation = (TextView) findViewById(R.id.textview_location);
         textviewLocation.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
@@ -181,7 +190,8 @@ public class MainActivity extends AppCompatActivity {
                 textviewSyntax.setText(getResources().getString(R.string.syntax_Location));
                 textviewPermission.setText(getResources().getString(R.string.permission_Location));
             } // onClick
-        });
+
+        }); // setOnClickListener
 
     } // onCreate
 
@@ -280,6 +290,9 @@ public class MainActivity extends AppCompatActivity {
         editor.putBoolean("SMSControl", mSMSControl);
         editor.putBoolean("EmailControl", mEmailResponse);
         editor.putBoolean("RemoteLocation", mRemoteLocation);
+        editor.putString("Keyword", mKeyword);
+        editor.putString("EmailAddress", mMyEmail);
+        editor.putString("Password", mPassword);
 
         editor.commit();
 

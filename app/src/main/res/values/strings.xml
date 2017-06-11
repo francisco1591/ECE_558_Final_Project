@@ -17,8 +17,8 @@
     <string name="button_keyword">Set Keyword</string>
 
     <string name="description_SMS">This control allows the phone to be controlled through SMS. When enabled, the phone can receive an SMS from either phone or email with keywords to control it. When disabled, this phone cannot be controlled remotely.</string>
-    <string name="description_Email">lorem ipsum</string>
-    <string name="description_Location">lorem ipsum</string>
+    <string name="description_Email">This control allows the phone to respond to sent commands through email. When enabled, the phone will send an email to the GMail account specified on the \'Email\' slider. </string>
+    <string name="description_Location">This control allows the phone to respond to a sent command with it\'s current location. When enabled, the phone will respond to command with GPS coordinates. </string>
 
     <string name="syntax_SMS">Syntax: &lt;Keyword&gt; sms</string>
     <string name="syntax_Email">Syntax: &lt;Keyword&gt; email</string>

@@ -85,7 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/textview_location"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:layout_marginLeft="18dp"
             android:id="@+id/textview_location"
             android:clickable="true" />
@@ -98,7 +98,6 @@
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:id="@+id/textview_description"
-        android:text="@string/description_SMS"
         android:textSize="12dp"
         android:layout_marginBottom="12dp" />
 
@@ -106,14 +105,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textview_syntax"
-        android:text="@string/syntax_SMS"
         android:layout_marginBottom="12dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textview_permission"
-        android:text="@string/permission_SMS"
         android:layout_marginBottom="12dp" />
 
 </LinearLayout>
