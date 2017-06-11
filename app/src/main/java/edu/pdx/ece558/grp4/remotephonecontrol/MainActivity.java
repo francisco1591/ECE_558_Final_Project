@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Private members
     boolean mSMSControl;
-    boolean mEmailControl;
+    boolean mEmailResponse;
     boolean mRemoteLocation;
 
     // UI Widgets
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 
         mSMSControl = settings.getBoolean("SMSControl", false);
-        mEmailControl = settings.getBoolean("EmailControl", false);
+        mEmailResponse = settings.getBoolean("EmailControl", false);
         mRemoteLocation = settings.getBoolean("RemoteLocation", false);
 
         // Wire up the button to start service
@@ -107,13 +107,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Wire up the toggle to enable Email control
         toggleEmail = (ToggleButton) findViewById(R.id.toggle_email);
-        toggleEmail.setChecked(mEmailControl);
+        toggleEmail.setChecked(mEmailResponse);
         toggleEmail.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (isChecked) { mEmailControl = true; }
-                else { mEmailControl = false; }
+                if (isChecked) { mEmailResponse = true; }
+                else { mEmailResponse = false; }
             } // onCheckedChanged
 
         }); // OnCheckedChangeListener
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = settings.edit();
 
         editor.putBoolean("SMSControl", mSMSControl);
-        editor.putBoolean("EmailControl", mEmailControl);
+        editor.putBoolean("EmailControl", mEmailResponse);
         editor.putBoolean("RemoteLocation", mRemoteLocation);
 
         editor.commit();

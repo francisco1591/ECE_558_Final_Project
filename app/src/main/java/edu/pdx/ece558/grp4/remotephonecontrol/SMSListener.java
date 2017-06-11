@@ -28,7 +28,14 @@ public class SMSListener extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
-
+    private static final String description_EmailResponse = "Enabling this option allows you" +
+            "to text your phone from an email account via an SMS Gateway," +
+            "sending an email to the address 1234567890@carrierDomain.com, where the numbers to" +
+            "the left of @ are your 10-digit phone number and the domain is specific to your " +
+            "phone carrier. Your phone will then automatically reply that email address." +
+            " You will need to provide login credentials to a Gmail account," +
+            "which will be used to send the response email on behalf of your phone." +
+            "For this feature to work you also need to ";
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Let it continue running until it is stopped.
