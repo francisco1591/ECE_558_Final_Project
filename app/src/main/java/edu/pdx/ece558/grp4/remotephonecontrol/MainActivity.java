@@ -8,23 +8,18 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.*;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.*;
 import android.os.Bundle;
-import android.telephony.SmsManager;
-import android.telephony.SmsMessage;
-import android.util.Log;
-import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.*;
+import android.app.DialogFragment;
 
 //////////////////
 // MainActivity //
 //////////////////
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity implements KeywordDialog.KeywordDialogListener {
 
     // Tag to identify this activity in logcat
     private static final String TAG = "RemotePhoneControl";
@@ -84,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         mSMSControl = settings.getBoolean("SMSControl", false);
         mEmailResponse = settings.getBoolean("EmailControl", false);
         mRemoteLocation = settings.getBoolean("RemoteLocation", false);
+
         mKeyword = settings.getString("Keyword", "");
         mMyEmail = settings.getString("EmailAddress", "");
         mPassword = settings.getString("Password", "");
@@ -96,10 +92,14 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (isChecked) {
+                    // Start the SMS service
                     mSMSControl = true;
                     Intent intent = new Intent(getBaseContext(), SMSListener.class);
                     startService(intent);
-                    // TODO : Launch KeywordDialog fragment from here
+
+                    // Create the dialog fragment and show it
+                    DialogFragment dialog = new KeywordDialog();
+                    dialog.show(getFragmentManager(), "KeywordDialogFragment");
                 }
 
                 else {
@@ -197,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
     ///////////////////////
 
     private void getSMSpermissions() {
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -305,23 +306,40 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-   protected void getCallPermission(){
+    ///////////////////////
+    // getCallPermission //
+    ///////////////////////
+
+    protected void getCallPermission(){
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE},
                     REQUEST_CALL_PERMISSION);
         }
-    }
-    /////////////////////
-    // showAlertDialog //
-    /////////////////////
 
-//    public void showAlertDialog() {
-//
-//        // Create an instance of the dialog fragment and show it
-//        DialogFragment dialog = new DialogFragment();
-//        dialog.show(getSupportFragmentManager(), "DialogFragment");
-//
-//    } // showAlertDialog
+    } // getCallPermission
+
+    // The dialog fragment receives a reference to this Activity through the
+    // Fragment.onAttach() callback, which it uses to call the following methods
+    // defined by the KeywordDialogFragment.KeywordDialogListener interface
+
+    ///////////////////////////
+    // onDialogPositiveClick //
+    ///////////////////////////
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        // TODO : Handle case when user hit the 'Set' button
+    } // onDialogPositiveClick
+
+    ///////////////////////////
+    // onDialogNegativeClick //
+    ///////////////////////////
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // TODO : Handle case when user hit the 'Cancel' button
+    } // onDialogNegativeClick
 
 } // MainActivity
