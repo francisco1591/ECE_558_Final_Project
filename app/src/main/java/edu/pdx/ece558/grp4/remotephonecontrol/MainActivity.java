@@ -86,18 +86,6 @@ public class MainActivity extends AppCompatActivity {
         mMyEmail = settings.getString("EmailAddress", "");
         mPassword = settings.getString("Password", "");
 
-        // Wire up the "Set Keyword" button
-        btnSetKeyword = (Button) findViewById(R.id.btnKeyword);
-        btnSetKeyword.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View view) {
-
-                // TODO : Launch KeywordDialog fragment from here
-
-            } // onClick
-
-        }); // OnClickListener
-
         // Wire up the toggle to enable SMS control
         toggleSMS = (ToggleButton) findViewById(R.id.toggle_SMS);
         toggleSMS.setChecked(mSMSControl);
@@ -109,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
                     mSMSControl = true;
                     Intent intent = new Intent(getBaseContext(), SMSListener.class);
                     startService(intent);
+                    // TODO : Launch KeywordDialog fragment from here
                 }
 
                 else {
@@ -128,8 +117,14 @@ public class MainActivity extends AppCompatActivity {
 
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (isChecked) { mEmailResponse = true; }
-                else { mEmailResponse = false; }
+                if (isChecked) {
+                    mEmailResponse = true;
+                    // TODO : Launch EmailDialog fragment from here
+                }
+                else {
+                    mEmailResponse = false;
+                }
+
             } // onCheckedChanged
 
         }); // OnCheckedChangeListener
