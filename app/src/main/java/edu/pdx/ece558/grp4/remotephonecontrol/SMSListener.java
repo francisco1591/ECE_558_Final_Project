@@ -6,6 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -26,6 +30,7 @@ public class SMSListener extends Service {
     public static final String PREFS_NAME ="RemotePhoneControl";
     //String phoneNo;
     String mMessage;
+    String mPhoneNo;
     String mSender;
     private boolean go;
     private ReceiveSMS receiveSMS; //BroadcastReceiver
@@ -119,10 +124,10 @@ public class SMSListener extends Service {
                         Toast toast = Toast.makeText(context,
                                 "senderNum: " + mSender + ", message: " + mMessage, duration);
                         toast.show();
-                        String words[] = mMessage.split("\n| "); // delimiter is space or \n
+                        String words[] = mMessage.split("\n| |\t"); // delimiters \n,\t and space
                         int j = Arrays.asList(words).indexOf(mKeyword);
                         if (j >= 0) {
-                            handleRequest(words[j+1]);
+                            handleRequest(words, j);
                         }
                     }
                 }
@@ -132,7 +137,8 @@ public class SMSListener extends Service {
         }
     }
 
-    public void handleRequest (String command){
+    public void handleRequest (String words [] , int j){
+        String command = words[j+1];
         switch (command){
             case "locate":
                 mSubject = "Response to location request";
@@ -142,8 +148,61 @@ public class SMSListener extends Service {
                 mSubject = "Response to picture request";
                 getLocation();
                 break;
+            case "call":
+                if (mSender.indexOf('@') < 0) // sender is phone
+                    makeCall(mSender);
+                else if(words[j+2] != null)// sender is email address, option includes phone num
+                    makeCall(words[j+2]);
+                break;
+            case "alert":
+               int duration;
+                if (words[j+2] != null) {
+                    duration = Integer.parseInt( words[j+2] ); // play for duration seconds
+                } else {
+                    duration = 5;  // default 5 s
+                }
+                soundAlert(duration);
+                break;
             default:
                 return;
+        }
+    }
+
+    public void soundAlert (final int duration) {
+        try {
+            Thread delay = new Thread () {
+                public void run (){
+                    AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                    // save ringer mode so we restore it in the end
+                    int mode = am.getRingerMode();
+                    am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                    am.setStreamVolume (AudioManager.STREAM_ALARM,am.getStreamMaxVolume(AudioManager.STREAM_ALARM),0);
+                    Uri alarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+                    Ringtone alert = RingtoneManager.getRingtone(getApplicationContext(), alarm);
+                    alert.play();
+                    try {
+                        Thread.sleep(duration*1000);
+                        alert.stop();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    // Restore ringer mode
+                    am.setRingerMode(mode);
+                }
+            };
+            delay.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void makeCall (String phoneNo) {
+        try {
+            Intent callIntent = new Intent(Intent.ACTION_CALL);
+            callIntent.setData(Uri.parse("tel:" + phoneNo ));
+            startActivity(callIntent);
+        } catch (SecurityException sex) {
+            Log.e(TAG, "Error making phone call: " + sex.getMessage());
         }
     }
 

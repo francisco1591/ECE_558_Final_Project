@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_SMS_PERMISSION = 0;
     private static final int REQUEST_SEND_SMS_PERMISSION = 1;
     private static final int REQUEST_FINE_LOCATION_PERMISSION = 2;
+    private static final int REQUEST_CALL_PERMISSION = 3;
 
     // Private members
     boolean mSMSControl;
@@ -73,7 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
         // get the permissions for SMS & GPS
         getSMSpermissions();
-        getLocationPermission();
+        //getLocationPermission();
+        getCallPermission();
 
         // Load the previous values for user preference...
         // i.e. whether SMS control, email control, location are allowed
@@ -242,7 +244,17 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
             }
-
+            case REQUEST_CALL_PERMISSION: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(getApplicationContext(),
+                            "Call permission granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            "Call permission required, please try again.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
         } // switch
     } // onRequestPermissionsResult
 
@@ -293,6 +305,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+   protected void getCallPermission(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE},
+                    REQUEST_CALL_PERMISSION);
+        }
+    }
     /////////////////////
     // showAlertDialog //
     /////////////////////
