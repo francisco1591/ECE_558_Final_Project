@@ -2,6 +2,8 @@
 
     <string name="app_name">RemotePhoneControl</string>
 
+    <!--Strings for MainActivity-->
+
     <string name="enabled_SMS">ON</string>
     <string name="disabled_SMS">OFF</string>
     <string name="textview_SMS">SMS Control</string>
@@ -25,5 +27,19 @@
     <string name="permission_SMS">Permissions: requires SMS services</string>
     <string name="permission_Email">Permissions: requires Email services</string>
     <string name="permission_Location">Permissions: requires GPS services</string>
+
+    <!--Strings for KeywordDialog-->
+
+    <string name="title_keyword_dialog">Keyword Dialog</string>
+    <string name="edittext_keyword">Enter Keyword</string>
+
+    <!--Strings for EmailDialog-->
+
+    <string name="title_email_dialog">Email Dialog</string>
+    <string name="edittext_email">Enter Email Address</string>
+
+    <!--Strings for both dialogs-->
+    <string name="actionbtn_set">Set</string>
+    <string name="actionbtn_cancel">Cancel</string>
 
 </resources>

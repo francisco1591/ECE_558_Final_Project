@@ -8,23 +8,20 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.*;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.*;
 import android.os.Bundle;
-import android.telephony.SmsManager;
-import android.telephony.SmsMessage;
-import android.util.Log;
-import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.*;
+import android.app.DialogFragment;
 
 //////////////////
 // MainActivity //
 //////////////////
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity
+        implements KeywordDialog.KeywordDialogListener,
+        EmailDialog.EmailDialogListener {
 
     // Tag to identify this activity in logcat
     private static final String TAG = "RemotePhoneControl";
@@ -84,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         mSMSControl = settings.getBoolean("SMSControl", false);
         mEmailResponse = settings.getBoolean("EmailControl", false);
         mRemoteLocation = settings.getBoolean("RemoteLocation", false);
+
         mKeyword = settings.getString("Keyword", "");
         mMyEmail = settings.getString("EmailAddress", "");
         mPassword = settings.getString("Password", "");
@@ -96,10 +94,14 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (isChecked) {
+                    // Start the SMS service
                     mSMSControl = true;
                     Intent intent = new Intent(getBaseContext(), SMSListener.class);
                     startService(intent);
-                    // TODO : Launch KeywordDialog fragment from here
+
+                    // Create the KeywordDialog fragment and show it
+                    DialogFragment dialog = new KeywordDialog();
+                    dialog.show(getFragmentManager(), "KeywordDialogFragment");
                 }
 
                 else {
@@ -121,8 +123,11 @@ public class MainActivity extends AppCompatActivity {
 
                 if (isChecked) {
                     mEmailResponse = true;
-                    // TODO : Launch EmailDialog fragment from here
+                    // Create the dialog fragment and show it
+                    DialogFragment dialog = new EmailDialog();
+                    dialog.show(getFragmentManager(), "EmailDialogFragment");
                 }
+
                 else {
                     mEmailResponse = false;
                 }
@@ -197,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
     ///////////////////////
 
     private void getSMSpermissions() {
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -211,50 +217,45 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+
         switch (requestCode) {
+
             case REQUEST_SEND_SMS_PERMISSION: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //sendSMSMessage();
                 } else {
-                    Toast.makeText(getApplicationContext(),
-                            "SMS permission required, please try again.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "SMS permission required, please try again.", Toast.LENGTH_LONG).show();
                     return;
                 }
             }
+
             case REQUEST_SMS_PERMISSION: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(),
-                            "SMS permission granted", Toast.LENGTH_SHORT).show();
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), "SMS permission granted", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(),
-                            "SMS permission required, please try again.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "SMS permission required, please try again.", Toast.LENGTH_LONG).show();
                     return;
                 }
             }
+
             case REQUEST_FINE_LOCATION_PERMISSION: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(),
-                            "Location permission granted", Toast.LENGTH_SHORT).show();
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), "Location permission granted", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(),
-                            "Location permission required, please try again.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Location permission required, please try again.", Toast.LENGTH_LONG).show();
                     return;
                 }
             }
+
             case REQUEST_CALL_PERMISSION: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Toast.makeText(getApplicationContext(),
-                            "Call permission granted", Toast.LENGTH_SHORT).show();
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(getApplicationContext(), "Call permission granted", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(),
-                            "Call permission required, please try again.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Call permission required, please try again.", Toast.LENGTH_LONG).show();
                     return;
                 }
             }
+
         } // switch
     } // onRequestPermissionsResult
 
@@ -264,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
 
     @TargetApi(23)
     public void getLocationPermission() {
+
         if ( !hasFineLocationPermission() ) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_FINE_LOCATION_PERMISSION);
@@ -277,8 +279,8 @@ public class MainActivity extends AppCompatActivity {
 
     /* Check for permissions to access fine location */
     private boolean hasFineLocationPermission () {
-        int result = ContextCompat
-                .checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
+
+        int result = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
         return result ==  PackageManager.PERMISSION_GRANTED;
 
     } // hasFineLocationPermission
@@ -289,6 +291,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+
         super.onStop();
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -303,25 +306,58 @@ public class MainActivity extends AppCompatActivity {
 
         editor.commit();
 
-    }
+    } // onStop
 
-   protected void getCallPermission(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE},
-                    REQUEST_CALL_PERMISSION);
+    ///////////////////////
+    // getCallPermission //
+    ///////////////////////
+
+    protected void getCallPermission(){
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PERMISSION);
         }
-    }
-    /////////////////////
-    // showAlertDialog //
-    /////////////////////
 
-//    public void showAlertDialog() {
-//
-//        // Create an instance of the dialog fragment and show it
-//        DialogFragment dialog = new DialogFragment();
-//        dialog.show(getSupportFragmentManager(), "DialogFragment");
-//
-//    } // showAlertDialog
+    } // getCallPermission
+
+    // The dialog fragment receives a reference to this Activity through the
+    // Fragment.onAttach() callback, which it uses to call the following methods
+    // defined by the KeywordDialogFragment.KeywordDialogListener interface
+
+    ////////////////////////////
+    // onKeywordPositiveClick //
+    ////////////////////////////
+
+    @Override
+    public void onKeywordPositiveClick(DialogFragment dialog) {
+        // TODO : Handle case when user hit the 'Set' button
+    } // onKeywordPositiveClick
+
+    ////////////////////////////
+    // onKeywordNegativeClick //
+    ////////////////////////////
+
+    @Override
+    public void onKeywordNegativeClick(DialogFragment dialog) {
+        // TODO : Handle case when user hit the 'Cancel' button
+    } // onKeywordNegativeClick
+
+    ////////////////////////////
+    // onEmailPositiveClick //
+    ////////////////////////////
+
+    @Override
+    public void onEmailPositiveClick(DialogFragment dialog) {
+        // TODO : Handle case when user hit the 'Set' button
+    } // onEmailPositiveClick
+
+    //////////////////////////
+    // onEmailNegativeClick //
+    //////////////////////////
+
+    @Override
+    public void onEmailNegativeClick(DialogFragment dialog) {
+        // TODO : Handle case when user hit the 'Cancel' button
+    } // onEmailNegativeClick
 
 } // MainActivity
