@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -21,6 +22,7 @@ public class SMSListener extends Service {
     String phoneNo;
     String message;
     private boolean go;
+    private ReceiveSMS receiveSMS; //BroadcastReceiver
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -30,26 +32,29 @@ public class SMSListener extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Let it continue running until it is stopped.
-//        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
-//        go = true;
-//        Thread thread = new Thread() {
-//            public void run () {
-//                long count = 0;
-//                String s;
-//                while (go){
-//                    try {
-//                        Thread.sleep(1000);
-//                        count++;
-//                        s = "Service running for "+count+" seconds.";
-//                        Log.d(TAG, s);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        };
-//        thread.start();
-
+        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+        // Register receiver dynamically to access class instance members
+        IntentFilter filter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+        receiveSMS = new ReceiveSMS();
+        registerReceiver( receiveSMS, filter);
+        go = true;
+        Thread thread = new Thread() {
+            public void run () {
+                long count = 0;
+                String s;
+                while (go){
+                    try {
+                        Thread.sleep(1000);
+                        count++;
+                        s = "Service running for "+count+" seconds.";
+                        Log.d(TAG, s);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        thread.start();
         return START_STICKY;
     }
 
@@ -57,30 +62,24 @@ public class SMSListener extends Service {
     public void onDestroy() {
         super.onDestroy();
         go = false;
+        unregisterReceiver(receiveSMS);
         Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
     }
 
     // Inner class for Broadcast Receiver
     public class ReceiveSMS extends BroadcastReceiver {
-
         // Get the object of SmsManager
         SmsManager sms = SmsManager.getDefault();
-
         public void onReceive(Context context, Intent intent) {
             // Retrieves a map of extended data from the intent.
             final Bundle bundle = intent.getExtras();
-
             try {
                 if (bundle != null) {
-
                     final Object[] pdusObj = (Object[]) bundle.get("pdus");
-
                     for (int i = 0; i < pdusObj.length; i++) {
-
                         SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
                         String senderID = currentMessage.getDisplayOriginatingAddress();
                         String message = currentMessage.getDisplayMessageBody();
-
                         int duration = Toast.LENGTH_LONG;
                         Toast toast = Toast.makeText(context,
                                 "senderNum: " + senderID + ", message: " + message, duration);
@@ -97,23 +96,23 @@ public class SMSListener extends Service {
                         // outgoing message information
                         String mailTo = "fjl@pdx.edu";
                         String subject = "Semper cemper dassus antes";
-                        sendEmail();;
+                        //sendEmail();
+                        getLocation();
                     }
                 }
-
             } catch (Exception e) {
                 Log.e(TAG, "Exception smsReceiver" + e);
             }
         }
     }
 
-    private void sendEmail() {
+    public static void sendEmail(final String msg) {
         Thread mailSender = new Thread() {
             public void run() {
                 try {
                     GMailSender sender = new GMailSender("francisco1591@gmail.com",
                             "iha.sari");
-                    sender.sendMail("Ya se cocio ", "A huihui!",
+                    sender.sendMail("Sachicomula, patas de mula ", msg,
                             "francisco1591@gmail.com", "fjl@pdx.edu");
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage(), e);
@@ -122,8 +121,9 @@ public class SMSListener extends Service {
         };
         mailSender.start();
     }
+
     protected void sendSMSMessage() {
-        phoneNo = "(847) 219-6443";
+        phoneNo = "8472196443";
         message = "Quioboles que compita, a donde vas que más valgas";
 //        if (ContextCompat.checkSelfPermission(this,
 //                Manifest.permission.SEND_SMS)
@@ -137,5 +137,23 @@ public class SMSListener extends Service {
             Toast.makeText(getApplicationContext(), "SMS sent.",
                     Toast.LENGTH_LONG).show();
 //        }
+    }
+
+    private void getLocation() {
+        final Locate loc = new Locate(this,5e3,15);
+        loc.getLocationUpdates();
+        Thread checkLoc = new Thread () {
+            public void run () {
+                try {
+                    Thread.sleep(10000);
+                    if (loc.mLocAttempts == 0) {
+                        loc.getLastKnownLocation();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        checkLoc.start();
     }
 }
