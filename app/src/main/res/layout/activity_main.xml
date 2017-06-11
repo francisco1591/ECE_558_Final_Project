@@ -12,19 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_keyword"
-        android:id="@+id/button_keyword" />
-
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/button_start_listen"
-            android:id="@+id/btnStart" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_stop_listen"
-        android:id="@+id/btnStop"
+        android:id="@+id/btnKeyword"
         android:layout_marginBottom="12dp"/>
 
     <LinearLayout
@@ -47,7 +35,8 @@
             android:text="@string/textview_SMS"
             android:textSize="18dp"
             android:layout_marginLeft="18dp"
-            android:id="@+id/textview_SMS" />
+            android:id="@+id/textview_SMS"
+            android:clickable="true" />
 
     </LinearLayout>
 
@@ -72,7 +61,8 @@
             android:text="@string/textview_email"
             android:textSize="18dp"
             android:layout_marginLeft="18dp"
-            android:id="@+id/textview_email" />
+            android:id="@+id/textview_email"
+            android:clickable="true" />
 
     </LinearLayout>
 
@@ -97,7 +87,8 @@
             android:text="@string/textview_location"
             android:textSize="18dp"
             android:layout_marginLeft="18dp"
-            android:id="@+id/textview_location" />
+            android:id="@+id/textview_location"
+            android:clickable="true" />
 
     </LinearLayout>
 

@@ -42,12 +42,20 @@ public class MainActivity extends AppCompatActivity {
     boolean mRemoteLocation;
 
     // UI Widgets
-    Button btnStart;
-    Button btnStop;
+
+    Button btnSetKeyword;
 
     ToggleButton toggleSMS;
     ToggleButton toggleEmail;
     ToggleButton toggleLocation;
+
+    TextView textviewSMS;
+    TextView textviewEmail;
+    TextView textviewLocation;
+
+    TextView textviewDescription;
+    TextView textviewSyntax;
+    TextView textviewPermission;
 
     //////////////
     // onCreate //
@@ -71,24 +79,14 @@ public class MainActivity extends AppCompatActivity {
         mEmailResponse = settings.getBoolean("EmailControl", false);
         mRemoteLocation = settings.getBoolean("RemoteLocation", false);
 
-        // Wire up the button to start service
-        btnStart = (Button) findViewById(R.id.btnStart);
-        btnStart.setOnClickListener(new View.OnClickListener() {
+        // Wire up the "Set Keyword" button
+        btnSetKeyword = (Button) findViewById(R.id.btnKeyword);
+        btnSetKeyword.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-                Intent intent = new Intent(getBaseContext(), SMSListener.class);
-                startService(intent);
-            } // onClick
 
-        }); // OnClickListener
+                // TODO : Launch KeywordDialog fragment from here
 
-        // Wire up the button to stop service
-        btnStop = (Button) findViewById(R.id.btnStop);
-        btnStop.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View view) {
-                Intent intent = new Intent(getBaseContext(), SMSListener.class);
-                stopService(intent);
             } // onClick
 
         }); // OnClickListener
@@ -100,8 +98,18 @@ public class MainActivity extends AppCompatActivity {
 
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (isChecked) { mSMSControl = true; }
-                else { mSMSControl = false; }
+                if (isChecked) {
+                    mSMSControl = true;
+                    Intent intent = new Intent(getBaseContext(), SMSListener.class);
+                    startService(intent);
+                }
+
+                else {
+                    mSMSControl = false;
+                    Intent intent = new Intent(getBaseContext(), SMSListener.class);
+                    stopService(intent);
+                }
+
             } // onCheckedChanged
 
         }); // onCheckedChangeListener
@@ -132,9 +140,48 @@ public class MainActivity extends AppCompatActivity {
 
         }); // OnCheckedChangeListener
 
-//        // Register receiver dynamically to access class instance members
-//        IntentFilter filter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
-//        registerReceiver(new ReceiveSMS(), filter);
+        // Wire up the 'description' text (at the bottom of app)
+        textviewDescription = (TextView) findViewById(R.id.textview_description);
+
+        // Wire up the 'syntax' text (at the bottom of app)
+        textviewSyntax = (TextView) findViewById(R.id.textview_syntax);
+
+        // Wire up the 'permissions' text (at bottom of app)
+        textviewPermission = (TextView) findViewById(R.id.textview_location);
+
+        // Wire up the "SMS Control" text item
+        textviewSMS = (TextView) findViewById(R.id.textview_SMS);
+        textviewSMS.setOnClickListener(new View.OnClickListener() {
+
+           public void onClick(View view) {
+               textviewDescription.setText(getResources().getString(R.string.description_SMS));
+               textviewSyntax.setText(getResources().getString(R.string.syntax_SMS));
+               textviewPermission.setText(getResources().getString(R.string.permission_SMS));
+           } // onClick
+        });
+
+        // Wire up the "Email Response" text item
+        textviewEmail = (TextView) findViewById(R.id.textview_SMS);
+        textviewEmail.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                textviewDescription.setText(getResources().getString(R.string.description_Email));
+                textviewSyntax.setText(getResources().getString(R.string.syntax_Email));
+                textviewPermission.setText(getResources().getString(R.string.permission_Email));
+            } // onClick
+        });
+
+
+        // Wire up the "Remote Location" text item
+        textviewLocation = (TextView) findViewById(R.id.textview_SMS);
+        textviewLocation.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                textviewDescription.setText(getResources().getString(R.string.description_Location));
+                textviewSyntax.setText(getResources().getString(R.string.syntax_Location));
+                textviewPermission.setText(getResources().getString(R.string.permission_Location));
+            } // onClick
+        });
 
     } // onCreate
 
@@ -242,12 +289,12 @@ public class MainActivity extends AppCompatActivity {
     // showAlertDialog //
     /////////////////////
 
-    public void showAlertDialog() {
-
-        // Create an instance of the dialog fragment and show it
-        DialogFragment dialog = new DialogFragment();
-        dialog.show(getSupportFragmentManager(), "DialogFragment");
-
-    } // showAlertDialog
+//    public void showAlertDialog() {
+//
+//        // Create an instance of the dialog fragment and show it
+//        DialogFragment dialog = new DialogFragment();
+//        dialog.show(getSupportFragmentManager(), "DialogFragment");
+//
+//    } // showAlertDialog
 
 } // MainActivity

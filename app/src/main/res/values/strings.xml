@@ -2,9 +2,6 @@
 
     <string name="app_name">RemotePhoneControl</string>
 
-    <string name="button_start_listen">Start Service</string>
-    <string name="button_stop_listen">Stop Service</string>
-
     <string name="enabled_SMS">ON</string>
     <string name="disabled_SMS">OFF</string>
     <string name="textview_SMS">SMS Control</string>

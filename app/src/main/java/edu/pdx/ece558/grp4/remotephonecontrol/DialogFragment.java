@@ -18,7 +18,7 @@ public class DialogFragment extends Fragment {
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.dialog_alert, null))
+        builder.setView(inflater.inflate(R.layout.dialog_alert, null));
 
         // Get the AlertDialog from create()
         return builder.create();
