@@ -35,8 +35,10 @@ public class Locate {
     long mTime0; // Time stamp of initial location attempt (ms)
     long mLocElapsedTime; // ms since initial Location attempt
     int mLocAttempts;
+    Context mContext;
 
     public Locate(Context context, double timeout, int radius) {
+        mContext = context;
         LocTimeOut = timeout;
         MinLocAccuracy = radius;
         mLocAttempts = 0;
@@ -69,7 +71,7 @@ public class Locate {
                             "\nLongitude:" + mLong +
                             "\nRadius:" + mRadius +
                             "\nTime:" + mLocElapsedTime / 1000.0;
-                    SMSListener.sendEmail(s);
+                    ((SMSListener)mContext).replyToSender(s);
                 }
             }
 
@@ -91,12 +93,11 @@ public class Locate {
         }  catch (SecurityException sex) {
             Log.e(TAG, "Error creating location service: " + sex.getMessage());
         }
-        String s = "New location:" +
+        String s = "Last known location:" +
                 "\nLatitude:" + mLat +
                 "\nLongitude:" + mLong +
-                "\nRadius:" + mRadius +
-                "\nTime:" + mLocElapsedTime / 1000.0;
-        SMSListener.sendEmail(s);
+                "\nRadius:" + mRadius ;
+        ((SMSListener)mContext).replyToSender(s);
     }
 
     private void saveLocation(Location location) {
