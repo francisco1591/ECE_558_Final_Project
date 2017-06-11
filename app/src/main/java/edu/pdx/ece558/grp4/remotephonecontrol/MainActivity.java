@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.*;
 
@@ -236,5 +237,17 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
 
     }
+
+    /////////////////////
+    // showAlertDialog //
+    /////////////////////
+
+    public void showAlertDialog() {
+
+        // Create an instance of the dialog fragment and show it
+        DialogFragment dialog = new DialogFragment();
+        dialog.show(getSupportFragmentManager(), "DialogFragment");
+
+    } // showAlertDialog
 
 } // MainActivity

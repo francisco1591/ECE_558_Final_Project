@@ -1,16 +1,34 @@
 <resources>
+
     <string name="app_name">RemotePhoneControl</string>
 
-    <string name="button_start_listen">Start Listening</string>
-    <string name="button_stop_listen">Stop Listening</string>
+    <string name="button_start_listen">Start Service</string>
+    <string name="button_stop_listen">Stop Service</string>
 
-    <string name="enabled_SMS">SMS Control Enaabled</string>
-    <string name="disabled_SMS">SMS Control Disabled</string>
+    <string name="enabled_SMS">ON</string>
+    <string name="disabled_SMS">OFF</string>
+    <string name="textview_SMS">SMS Control</string>
 
-    <string name="enabled_email">Email Control Enabled</string>
-    <string name="disabled_email">Email Control Disabled</string>
+    <string name="enabled_email">ON</string>
+    <string name="disabled_email">OFF</string>
+    <string name="textview_email">Email Response</string>
 
-    <string name="enabled_location">Location Enabled</string>
-    <string name="disabled_location">Location Disabled</string>
+    <string name="enabled_location">ON</string>
+    <string name="disabled_location">OFF</string>
+    <string name="textview_location">Remote Location</string>
+
+    <string name="button_keyword">Set Keyword</string>
+
+    <string name="description_SMS">This control allows the phone to be controlled through SMS. When enabled, the phone can receive an SMS from either phone or email with keywords to control it. When disabled, this phone cannot be controlled remotely.</string>
+    <string name="description_Email">lorem ipsum</string>
+    <string name="description_Location">lorem ipsum</string>
+
+    <string name="syntax_SMS">Syntax: &lt;Keyword&gt; sms</string>
+    <string name="syntax_Email">Syntax: &lt;Keyword&gt; email</string>
+    <string name="syntax_Location">Syntax: &lt;Keyword&gt; location</string>
+
+    <string name="permission_SMS">Permissions: requires SMS services</string>
+    <string name="permission_Email">Permissions: requires Email services</string>
+    <string name="permission_Location">Permissions: requires GPS services</string>
 
 </resources>
