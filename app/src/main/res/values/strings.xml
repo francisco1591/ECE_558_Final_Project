@@ -14,12 +14,12 @@
     <string name="toggle_on">ON</string>
     <string name="toggle_off">OFF</string>
 
-    <string name="description_SMS">This control allows the phone to be controlled through SMS. When enabled, the phone can receive an SMS from either phone or email with keywords to control it. When disabled, this phone cannot be controlled remotely.</string>
-    <string name="description_Email">This control allows the phone to respond to sent commands through email. When enabled, the phone will send an email to the GMail account specified on the \'Email\' slider. </string>
-    <string name="description_Location">This control allows the phone to respond to a sent command with it\'s current location. When enabled, the phone will respond to command with GPS coordinates. </string>
-    <string name="description_Phone"></string>
-    <string name="description_Sound"></string>
-    <string name="description_Picture"></string>
+    <string name="description_SMS">This allows the phone to be controlled through SMS. When enabled, the phone can receive an SMS from either phone or email with keywords to control it.</string>
+    <string name="description_Email">This allows the phone to respond to sent commands through email. When enabled, the phone will send an email to the specified GMail account.</string>
+    <string name="description_Location">This allows the phone to respond to a sent command with it\'s current location. When enabled, the phone will respond to command with GPS coordinates.</string>
+    <string name="description_Phone">This allows the phone to respond to a sent command through phone service. When enabled, the phone will send a phone call to the number which texted it.</string>
+    <string name="description_Sound">This allows the phone to respond to a sent command by playing a sound. When enabled, the phone will play a sound to help determine its location in a room.</string>
+    <string name="description_Picture">This allows the phone to response to a sent command with a picture. When enabled, the phone will respond to command with a picture from the front-facing camera.</string>
 
 
     <string name="syntax_SMS">Syntax: &lt;Keyword&gt; sms</string>

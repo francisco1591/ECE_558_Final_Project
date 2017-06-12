@@ -69,7 +69,6 @@ public class MainActivity extends FragmentActivity
     TextView textviewSyntax;
     TextView textviewPermission;
 
-
     //////////////
     // onCreate //
     //////////////
@@ -80,9 +79,12 @@ public class MainActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // get the permissions for SMS & GPS
+        // get the permissions for all services
         getSMSpermissions();
+        getLocationPermission();
         getCallPermission();
+        getCameraPermission();
+        getExtStoragePermission();
 
         // Load the previous values for user preference...
         // i.e. whether SMS control, email control, location are allowed
@@ -106,23 +108,15 @@ public class MainActivity extends FragmentActivity
 
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (isChecked) {
-                    // Start the SMS service
-                    mSMSControl = true;
-                    Intent intent = new Intent(getBaseContext(), SMSListener.class);
-                    startService(intent);
+                mSMSControl = isChecked;
 
+                if (isChecked) {
                     // Create the KeywordDialog fragment and show it
                     DialogFragment dialog = new KeywordDialog();
                     dialog.show(getFragmentManager(), "KeywordDialogFragment");
                 }
 
-                else {
-                    mSMSControl = false;
-                    Intent intent = new Intent(getBaseContext(), SMSListener.class);
-                    stopService(intent);
-                }
-
+                refreshSMSListener();
             } // onCheckedChanged
 
         }); // onCheckedChangeListener
@@ -134,17 +128,15 @@ public class MainActivity extends FragmentActivity
 
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
+                mEmailResponse = isChecked;
+
                 if (isChecked) {
-                    mEmailResponse = true;
                     // Create the dialog fragment and show it
                     DialogFragment dialog = new EmailDialog();
                     dialog.show(getFragmentManager(), "EmailDialogFragment");
                 }
 
-                else {
-                    mEmailResponse = false;
-                }
-
+                refreshSMSListener();
             } // onCheckedChanged
 
         }); // OnCheckedChangeListener
@@ -156,8 +148,8 @@ public class MainActivity extends FragmentActivity
 
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (isChecked) { mRemoteLocation = true; }
-                else { mRemoteLocation = false; }
+                mRemoteLocation = isChecked;
+                refreshSMSListener();
             } // onCheckedChanged
 
         }); // OnCheckedChangeListener
@@ -169,8 +161,8 @@ public class MainActivity extends FragmentActivity
 
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (isChecked) { mPhoneReponse = true; }
-                else { mPhoneReponse = false; }
+                mPhoneReponse = isChecked;
+                refreshSMSListener();
             } // onCheckedChanged
 
         }); // OnCheckedChangeListener
@@ -182,8 +174,8 @@ public class MainActivity extends FragmentActivity
 
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (isChecked) { mPlaySound = true; }
-                else { mPlaySound = false; }
+                mPlaySound = isChecked;
+                refreshSMSListener();
             } // onCheckedChanged
 
         }); // OnCheckedChangeListener
@@ -195,8 +187,8 @@ public class MainActivity extends FragmentActivity
 
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (isChecked) { mTakePicture = true; }
-                else { mTakePicture = false; }
+                mTakePicture = isChecked;
+                refreshSMSListener();
             } // onCheckedChanged
 
         }); // OnCheckedChangeListener
@@ -285,118 +277,6 @@ public class MainActivity extends FragmentActivity
 
     } // onCreate
 
-    ///////////////////////
-    // getSMSpermissions //
-    ///////////////////////
-
-    private void getSMSpermissions() {
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.SEND_SMS},
-                    REQUEST_SMS_PERMISSION);
-        }
-    } // getSMSpermissions
-
-    ////////////////////////////////
-    // onRequestPermissionsResult //
-    ////////////////////////////////
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-
-        switch (requestCode) {
-
-            case REQUEST_SEND_SMS_PERMISSION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //sendSMSMessage();
-                } else {
-                    Toast.makeText(getApplicationContext(), "SMS permission required, please try again.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-            }
-
-            case REQUEST_SMS_PERMISSION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(), "SMS permission granted", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "SMS permission required, please try again.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-            }
-
-            case REQUEST_FINE_LOCATION_PERMISSION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(), "Location permission granted", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Location permission required, please try again.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-            }
-
-            case REQUEST_CALL_PERMISSION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Toast.makeText(getApplicationContext(), "Call permission granted", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Call permission required, please try again.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-            }
-
-            case REQUEST_CAMERA_PERMISSION: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(),"Camera permission granted.",
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            "Camera permission required, please try again.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-            }
-
-            case REQUEST_EXT_STORAGE_PERMISSION: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(),"External storage permission granted.",
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            "External storage permission required, please try again.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-            }
-
-        } // switch
-    } // onRequestPermissionsResult
-
-    ///////////////////////////
-    // getLocationPermission //
-    ///////////////////////////
-
-    @TargetApi(23)
-    public void getLocationPermission() {
-
-        if ( !hasFineLocationPermission() ) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_FINE_LOCATION_PERMISSION);
-        }
-
-    } // getLocationPermission
-
-    ///////////////////////////////
-    // hasFineLocationPermission //
-    ///////////////////////////////
-
-    /* Check for permissions to access fine location */
-    private boolean hasFineLocationPermission () {
-
-        int result = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
-        return result ==  PackageManager.PERMISSION_GRANTED;
-
-    } // hasFineLocationPermission
-
     ////////////
     // onStop //
     ////////////
@@ -405,6 +285,15 @@ public class MainActivity extends FragmentActivity
     protected void onStop() {
 
         super.onStop();
+        saveSettings();
+
+    } // onStop
+
+    //////////////////
+    // saveSettings //
+    //////////////////
+
+    protected void saveSettings() {
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
@@ -422,23 +311,20 @@ public class MainActivity extends FragmentActivity
 
         editor.commit();
 
-    } // onStop
+    } // saveSettings
 
-    ///////////////////////
-    // getCallPermission //
-    ///////////////////////
+    ////////////////////////
+    // refreshSMSListener //
+    ////////////////////////
+    protected void refreshSMSListener() {
 
-    protected void getCallPermission(){
+        Intent intent = new Intent(getBaseContext(), SMSListener.class);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PERMISSION);
-        }
+        stopService(intent);
+        saveSettings();
+        startService(intent);
 
-    } // getCallPermission
-
-    // The dialog fragment receives a reference to this Activity through the
-    // Fragment.onAttach() callback, which it uses to call the following methods
-    // defined by the KeywordDialogFragment.KeywordDialogListener interface
+    } // refreshSMSListener
 
     ////////////////////////////
     // onKeywordPositiveClick //
@@ -476,15 +362,61 @@ public class MainActivity extends FragmentActivity
         // TODO : Handle case when user hit the 'Cancel' button
     } // onEmailNegativeClick
 
+    ///////////////////////
+    // getSMSpermissions //
+    ///////////////////////
+
+    private void getSMSpermissions() {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, REQUEST_SMS_PERMISSION);
+        }
+    } // getSMSpermissions
+
+    ///////////////////////////
+    // getLocationPermission //
+    ///////////////////////////
+
+    @TargetApi(23)
+    public void getLocationPermission() {
+
+        if ( !hasFineLocationPermission() ) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION_PERMISSION);
+        }
+
+    } // getLocationPermission
+
+    ///////////////////////////////
+    // hasFineLocationPermission //
+    ///////////////////////////////
+
+    /* Check for permissions to access fine location */
+    private boolean hasFineLocationPermission () {
+
+        int result = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
+        return result ==  PackageManager.PERMISSION_GRANTED;
+
+    } // hasFineLocationPermission
+
+    ///////////////////////
+    // getCallPermission //
+    ///////////////////////
+
+    protected void getCallPermission(){
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PERMISSION);
+        }
+
+    } // getCallPermission
+
     /////////////////////////
     // getCameraPermission //
     /////////////////////////
 
     protected void getCameraPermission(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA},REQUEST_CAMERA_PERMISSION);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},REQUEST_CAMERA_PERMISSION);
         }
     } // getCameraPermission
 
@@ -493,11 +425,75 @@ public class MainActivity extends FragmentActivity
     /////////////////////////////
 
     protected void getExtStoragePermission(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_EXT_STORAGE_PERMISSION);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_EXT_STORAGE_PERMISSION);
         }
     } // getExtStoragePermission
+
+    ////////////////////////////////
+    // onRequestPermissionsResult //
+    ////////////////////////////////
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+
+        switch (requestCode) {
+
+            case REQUEST_SEND_SMS_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //sendSMSMessage();
+                } else {
+                    Toast.makeText(getApplicationContext(), "SMS permission required, please try again.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+            case REQUEST_SMS_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), "SMS permission granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "SMS permission required, please try again.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+            case REQUEST_FINE_LOCATION_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), "Location permission granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Location permission required, please try again.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+            case REQUEST_CALL_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(getApplicationContext(), "Call permission granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Call permission required, please try again.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+            case REQUEST_CAMERA_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(),"Camera permission granted.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Camera permission required, please try again.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+            case REQUEST_EXT_STORAGE_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(),"External storage permission granted.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "External storage permission required, please try again.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+        } // switch
+    } // onRequestPermissionsResult
 
 } // MainActivity
