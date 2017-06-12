@@ -1,6 +1,5 @@
 package edu.pdx.ece558.grp4.remotephonecontrol;
 
-// TODO : Need to terminate service, save preferences, restart service on slider change
 /////////////////////
 // Android Imports //
 /////////////////////
@@ -27,9 +26,18 @@ public class MainActivity extends FragmentActivity
     // Tag to identify this activity in logcat
     private static final String TAG = "RemotePhoneControl";
 
+    // Constant IDs for passing arguments to DescriptionDialog
+    public static final int ID_SMS = 0;
+    public static final int ID_EMAIL = 1;
+    public static final int ID_LOCATION = 2;
+    public static final int ID_PHONE = 3;
+    public static final int ID_SOUND = 4;
+    public static final int ID_PICTURE = 5;
+
     // File to save SharedPreferences in
     public static final String PREFS_NAME ="RemotePhoneControl";
 
+    // Constant IDs for determining permissions
     private static final int REQUEST_SMS_PERMISSION = 0;
     private static final int REQUEST_SEND_SMS_PERMISSION = 1;
     private static final int REQUEST_FINE_LOCATION_PERMISSION = 2;
@@ -41,7 +49,7 @@ public class MainActivity extends FragmentActivity
     boolean mSMSControl;
     boolean mEmailResponse;
     boolean mRemoteLocation;
-    boolean mPhoneReponse;
+    boolean mPhoneResponse;
     boolean mPlaySound;
     boolean mTakePicture;
 
@@ -64,10 +72,6 @@ public class MainActivity extends FragmentActivity
     TextView textviewPhone;
     TextView textviewSound;
     TextView textviewPicture;
-
-    TextView textviewDescription;
-    TextView textviewSyntax;
-    TextView textviewPermission;
 
     //////////////
     // onCreate //
@@ -93,7 +97,7 @@ public class MainActivity extends FragmentActivity
         mSMSControl = settings.getBoolean("SMSControl", false);
         mEmailResponse = settings.getBoolean("EmailControl", false);
         mRemoteLocation = settings.getBoolean("RemoteLocation", false);
-        mPhoneReponse = settings.getBoolean("PhoneResponse", false);
+        mPhoneResponse = settings.getBoolean("PhoneResponse", false);
         mPlaySound = settings.getBoolean("PlaySound", false);
         mTakePicture = settings.getBoolean("TakePicture", false);
 
@@ -156,12 +160,12 @@ public class MainActivity extends FragmentActivity
 
         // Wire up the toggle to enable Phone response
         togglePhone = (ToggleButton) findViewById(R.id.toggle_Phone);
-        togglePhone.setChecked(mPhoneReponse);
+        togglePhone.setChecked(mPhoneResponse);
         togglePhone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                mPhoneReponse = isChecked;
+                mPhoneResponse = isChecked;
                 refreshSMSListener();
             } // onCheckedChanged
 
@@ -193,23 +197,14 @@ public class MainActivity extends FragmentActivity
 
         }); // OnCheckedChangeListener
 
-        // Wire up the 'description' text (at the bottom of app)
-        textviewDescription = (TextView) findViewById(R.id.textview_description);
-
-        // Wire up the 'syntax' text (at the bottom of app)
-        textviewSyntax = (TextView) findViewById(R.id.textview_syntax);
-
-        // Wire up the 'permissions' text (at bottom of app)
-        textviewPermission = (TextView) findViewById(R.id.textview_permission);
-
         // Wire up the "SMS Control" text item
         textviewSMS = (TextView) findViewById(R.id.textview_SMS);
         textviewSMS.setOnClickListener(new View.OnClickListener() {
 
            public void onClick(View view) {
-               textviewDescription.setText(getResources().getString(R.string.description_SMS));
-               textviewSyntax.setText(getResources().getString(R.string.syntax_SMS));
-               textviewPermission.setText(getResources().getString(R.string.permission_SMS));
+               // Start the DescriptionDialog fragment w/ 'SMS' as argument
+               DialogFragment dialog = newDescriptionDialog(ID_SMS);
+               dialog.show(getFragmentManager(), "DescriptionDialog");
            } // onClick
 
         }); // setOnClickListener
@@ -219,9 +214,9 @@ public class MainActivity extends FragmentActivity
         textviewEmail.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-                textviewDescription.setText(getResources().getString(R.string.description_Email));
-                textviewSyntax.setText(getResources().getString(R.string.syntax_Email));
-                textviewPermission.setText(getResources().getString(R.string.permission_Email));
+                // Start the DescriptionDialog fragment w/ 'Email' as argument
+                DialogFragment dialog = newDescriptionDialog(ID_EMAIL);
+                dialog.show(getFragmentManager(), "DescriptionDialog");
             } // onClick
 
         }); // setOnClickListener
@@ -232,9 +227,9 @@ public class MainActivity extends FragmentActivity
         textviewLocation.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-                textviewDescription.setText(getResources().getString(R.string.description_Location));
-                textviewSyntax.setText(getResources().getString(R.string.syntax_Location));
-                textviewPermission.setText(getResources().getString(R.string.permission_Location));
+                // Start the DescriptionDialog fragment w/ 'Location' as argument
+                DialogFragment dialog = newDescriptionDialog(ID_LOCATION);
+                dialog.show(getFragmentManager(), "DescriptionDialog");
             } // onClick
 
         }); // setOnClickListener
@@ -244,9 +239,9 @@ public class MainActivity extends FragmentActivity
         textviewPhone.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-                textviewDescription.setText(getResources().getString(R.string.description_Phone));
-                textviewSyntax.setText(getResources().getString(R.string.syntax_Phone));
-                textviewPermission.setText(getResources().getString(R.string.permission_Phone));
+                // Start the DescriptionDialog fragment w/ 'Phone' as argument
+                DialogFragment dialog = newDescriptionDialog(ID_PHONE);
+                dialog.show(getFragmentManager(), "DescriptionDialog");
             } // onClick
 
         }); // setOnClickListener
@@ -256,9 +251,9 @@ public class MainActivity extends FragmentActivity
         textviewSound.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-                textviewDescription.setText(getResources().getString(R.string.description_Sound));
-                textviewSyntax.setText(getResources().getString(R.string.syntax_Sound));
-                textviewPermission.setText(getResources().getString(R.string.permission_Sound));
+                // Start the DescriptionDialog fragment w/ 'Sound' as argument
+                DialogFragment dialog = newDescriptionDialog(ID_SOUND);
+                dialog.show(getFragmentManager(), "DescriptionDialog");
             } // onClick
 
         }); // setOnClickListener
@@ -268,9 +263,9 @@ public class MainActivity extends FragmentActivity
         textviewPicture.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-                textviewDescription.setText(getResources().getString(R.string.description_Picture));
-                textviewSyntax.setText(getResources().getString(R.string.syntax_Picture));
-                textviewPermission.setText(getResources().getString(R.string.permission_Picture));
+                // Start the DescriptionDialog fragment w/ 'Picture' as argument
+                DialogFragment dialog = newDescriptionDialog(ID_PICTURE);
+                dialog.show(getFragmentManager(), "DescriptionDialog");
             } // onClick
 
         }); // setOnClickListener
@@ -301,7 +296,7 @@ public class MainActivity extends FragmentActivity
         editor.putBoolean("SMSControl", mSMSControl);
         editor.putBoolean("EmailControl", mEmailResponse);
         editor.putBoolean("RemoteLocation", mRemoteLocation);
-        editor.putBoolean("PhoneResponse", mPhoneReponse);
+        editor.putBoolean("PhoneResponse", mPhoneResponse);
         editor.putBoolean("PlaySound", mPlaySound);
         editor.putBoolean("TakePicture", mTakePicture);
 
@@ -495,5 +490,19 @@ public class MainActivity extends FragmentActivity
 
         } // switch
     } // onRequestPermissionsResult
+
+    //////////////////////////
+    // newDescriptionDialog //
+    //////////////////////////
+
+    public static DescriptionDialog newDescriptionDialog(int textID) {
+
+        Bundle args = new Bundle();
+        args.putInt(DescriptionDialog.EXTRA_TEXTVIEW_ID, textID);
+        DescriptionDialog dialog = new DescriptionDialog();
+        dialog.setArguments(args);
+        return dialog;
+
+    } // newDescriptionDialog
 
 } // MainActivity
