@@ -1,8 +1,6 @@
 package edu.pdx.ece558.grp4.remotephonecontrol;
 
 // TODO : Need to terminate service, save preferences, restart service on slider change
-// TODO : Add 3 buttons (phone response, allow picture, play sound)
-
 /////////////////////
 // Android Imports //
 /////////////////////
@@ -43,6 +41,9 @@ public class MainActivity extends FragmentActivity
     boolean mSMSControl;
     boolean mEmailResponse;
     boolean mRemoteLocation;
+    boolean mPhoneReponse;
+    boolean mPlaySound;
+    boolean mTakePicture;
 
     String mKeyword;
     String mMyEmail;
@@ -50,19 +51,24 @@ public class MainActivity extends FragmentActivity
 
     // UI Widgets
 
-    Button btnSetKeyword;
-
     ToggleButton toggleSMS;
     ToggleButton toggleEmail;
     ToggleButton toggleLocation;
+    ToggleButton togglePhone;
+    ToggleButton toggleSound;
+    ToggleButton togglePicture;
 
     TextView textviewSMS;
     TextView textviewEmail;
     TextView textviewLocation;
+    TextView textviewPhone;
+    TextView textviewSound;
+    TextView textviewPicture;
 
     TextView textviewDescription;
     TextView textviewSyntax;
     TextView textviewPermission;
+
 
     //////////////
     // onCreate //
@@ -76,11 +82,7 @@ public class MainActivity extends FragmentActivity
 
         // get the permissions for SMS & GPS
         getSMSpermissions();
-
-        //getLocationPermission();
         getCallPermission();
-
-        // 
 
         // Load the previous values for user preference...
         // i.e. whether SMS control, email control, location are allowed
@@ -89,6 +91,9 @@ public class MainActivity extends FragmentActivity
         mSMSControl = settings.getBoolean("SMSControl", false);
         mEmailResponse = settings.getBoolean("EmailControl", false);
         mRemoteLocation = settings.getBoolean("RemoteLocation", false);
+        mPhoneReponse = settings.getBoolean("PhoneResponse", false);
+        mPlaySound = settings.getBoolean("PlaySound", false);
+        mTakePicture = settings.getBoolean("TakePicture", false);
 
         mKeyword = settings.getString("Keyword", "");
         mMyEmail = settings.getString("EmailAddress", "");
@@ -123,7 +128,7 @@ public class MainActivity extends FragmentActivity
         }); // onCheckedChangeListener
 
         // Wire up the toggle to enable Email control
-        toggleEmail = (ToggleButton) findViewById(R.id.toggle_email);
+        toggleEmail = (ToggleButton) findViewById(R.id.toggle_Email);
         toggleEmail.setChecked(mEmailResponse);
         toggleEmail.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
@@ -145,7 +150,7 @@ public class MainActivity extends FragmentActivity
         }); // OnCheckedChangeListener
 
         // Wire up the toggle to enable Location reporting
-        toggleLocation = (ToggleButton) findViewById(R.id.toggle_location);
+        toggleLocation = (ToggleButton) findViewById(R.id.toggle_Location);
         toggleLocation.setChecked(mRemoteLocation);
         toggleLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
@@ -153,6 +158,45 @@ public class MainActivity extends FragmentActivity
 
                 if (isChecked) { mRemoteLocation = true; }
                 else { mRemoteLocation = false; }
+            } // onCheckedChanged
+
+        }); // OnCheckedChangeListener
+
+        // Wire up the toggle to enable Phone response
+        togglePhone = (ToggleButton) findViewById(R.id.toggle_Phone);
+        togglePhone.setChecked(mPhoneReponse);
+        togglePhone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) { mPhoneReponse = true; }
+                else { mPhoneReponse = false; }
+            } // onCheckedChanged
+
+        }); // OnCheckedChangeListener
+
+        // Wire up the toggle to enable Sound to play
+        toggleSound = (ToggleButton) findViewById(R.id.toggle_Sound);
+        toggleSound.setChecked(mPlaySound);
+        toggleSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) { mPlaySound = true; }
+                else { mPlaySound = false; }
+            } // onCheckedChanged
+
+        }); // OnCheckedChangeListener
+
+        // Wire up the toggle to enable Camera to take picture
+        togglePicture = (ToggleButton) findViewById(R.id.toggle_Picture);
+        togglePicture.setChecked(mTakePicture);
+        togglePicture.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) { mTakePicture = true; }
+                else { mTakePicture = false; }
             } // onCheckedChanged
 
         }); // OnCheckedChangeListener
@@ -179,7 +223,7 @@ public class MainActivity extends FragmentActivity
         }); // setOnClickListener
 
         // Wire up the "Email Response" text item
-        textviewEmail = (TextView) findViewById(R.id.textview_email);
+        textviewEmail = (TextView) findViewById(R.id.textview_Email);
         textviewEmail.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
@@ -192,13 +236,49 @@ public class MainActivity extends FragmentActivity
 
 
         // Wire up the "Remote Location" text item
-        textviewLocation = (TextView) findViewById(R.id.textview_location);
+        textviewLocation = (TextView) findViewById(R.id.textview_Location);
         textviewLocation.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
                 textviewDescription.setText(getResources().getString(R.string.description_Location));
                 textviewSyntax.setText(getResources().getString(R.string.syntax_Location));
                 textviewPermission.setText(getResources().getString(R.string.permission_Location));
+            } // onClick
+
+        }); // setOnClickListener
+
+        // Wire up the "Phone Response" text item
+        textviewPhone = (TextView) findViewById(R.id.textview_Phone);
+        textviewPhone.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                textviewDescription.setText(getResources().getString(R.string.description_Phone));
+                textviewSyntax.setText(getResources().getString(R.string.syntax_Phone));
+                textviewPermission.setText(getResources().getString(R.string.permission_Phone));
+            } // onClick
+
+        }); // setOnClickListener
+
+        // Wire up the "Play Sound" text item
+        textviewSound = (TextView) findViewById(R.id.textview_Sound);
+        textviewSound.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                textviewDescription.setText(getResources().getString(R.string.description_Sound));
+                textviewSyntax.setText(getResources().getString(R.string.syntax_Sound));
+                textviewPermission.setText(getResources().getString(R.string.permission_Sound));
+            } // onClick
+
+        }); // setOnClickListener
+
+        // Wire up the "Take Picture" text item
+        textviewPicture = (TextView) findViewById(R.id.textview_Picture);
+        textviewPicture.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                textviewDescription.setText(getResources().getString(R.string.description_Picture));
+                textviewSyntax.setText(getResources().getString(R.string.syntax_Picture));
+                textviewPermission.setText(getResources().getString(R.string.permission_Picture));
             } // onClick
 
         }); // setOnClickListener
@@ -332,6 +412,10 @@ public class MainActivity extends FragmentActivity
         editor.putBoolean("SMSControl", mSMSControl);
         editor.putBoolean("EmailControl", mEmailResponse);
         editor.putBoolean("RemoteLocation", mRemoteLocation);
+        editor.putBoolean("PhoneResponse", mPhoneReponse);
+        editor.putBoolean("PlaySound", mPlaySound);
+        editor.putBoolean("TakePicture", mTakePicture);
+
         editor.putString("Keyword", mKeyword);
         editor.putString("EmailAddress", mMyEmail);
         editor.putString("Password", mPassword);
