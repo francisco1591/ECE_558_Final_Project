@@ -8,12 +8,18 @@ import java.security.Security;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 /**
  * Created by Francisco on 6/9/2017.
@@ -50,18 +56,45 @@ public class GMailSender extends javax.mail.Authenticator {
     }
 
     public synchronized void sendMail(String subject, String body,
-                                      String sender, String recipients) throws Exception {
-        MimeMessage message = new MimeMessage(session);
-        DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), "text/plain"));
-        message.setSender(new InternetAddress(sender));
-        message.setSubject(subject);
-        message.setDataHandler(handler);
+                                      String sender, String recipients, String filename) throws Exception {
+//        MimeMessage message = new MimeMessage(session);
+//        DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), "text/plain"));
+//        message.setSender(new InternetAddress(sender));
+//        message.setSubject(subject);
+//        message.setDataHandler(handler);
+//
+//        if (recipients.indexOf(',') > 0)
+//            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
+//        else
+//            message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
 
+        Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(sender));
         if (recipients.indexOf(',') > 0)
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
         else
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
+        message.setSubject(subject);
+        // Create the message part
+        BodyPart messageBodyPart = new MimeBodyPart();
+        messageBodyPart.setText(body);
+        // Create a multipart message
+        Multipart multipart = new MimeMultipart();
+        // Set text message part
+        multipart.addBodyPart(messageBodyPart);
 
+        if (filename != null) {
+            // Part two is attachment
+            messageBodyPart = new MimeBodyPart();
+            DataSource source = new FileDataSource(filename);
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(filename);
+            multipart.addBodyPart(messageBodyPart);
+        }
+        // Include all message parts
+        message.setContent(multipart);
+        // Send message
         Transport.send(message);
+
     }
 }

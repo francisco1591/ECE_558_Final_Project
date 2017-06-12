@@ -71,7 +71,7 @@ public class Locate {
                             "\nLongitude:" + mLong +
                             "\nRadius:" + mRadius +
                             "\nTime:" + mLocElapsedTime / 1000.0;
-                    ((SMSListener)mContext).replyToSender(s);
+                    ((SMSListener)mContext).replyToSender(s,null);
                 }
             }
 
@@ -97,7 +97,7 @@ public class Locate {
                 "\nLatitude:" + mLat +
                 "\nLongitude:" + mLong +
                 "\nRadius:" + mRadius ;
-        ((SMSListener)mContext).replyToSender(s);
+        ((SMSListener)mContext).replyToSender(s,null);
     }
 
     private void saveLocation(Location location) {

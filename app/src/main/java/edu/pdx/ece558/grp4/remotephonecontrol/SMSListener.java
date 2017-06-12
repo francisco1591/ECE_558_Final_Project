@@ -17,7 +17,6 @@ import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
-
 import java.util.Arrays;
 
 /**
@@ -42,6 +41,7 @@ public class SMSListener extends Service {
     String mKeyword;
     String mPassword;
     String mMyEmail;
+//    private Context mContext;
 
     @Nullable
     @Override
@@ -70,6 +70,8 @@ public class SMSListener extends Service {
         mKeyword = "hearMe!";
         mMyEmail = "francisco1591@gmail.com";
         mPassword = "iha.sari";
+//        mContext = this;
+
 
         // Let it continue running until it is stopped.
         Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
@@ -144,10 +146,20 @@ public class SMSListener extends Service {
                 mSubject = "Response to location request";
                 getLocation();
                 break;
-            case "picture":
+            case "picture": {
+                if (mSender.indexOf('@') < 0) // sender is phone
+                    break; // only email supported for picture
                 mSubject = "Response to picture request";
-                getLocation();
+                boolean frontCamera = true; // default
+                // check for back camera option
+                if (words.length > j+2)  {
+                    if (words[j+2].equals("back"))
+                        frontCamera = false;
+                }
+                Picture pic = new Picture(SMSListener.this, frontCamera);
+                pic.takePic();
                 break;
+            }
             case "call":
                 if (mSender.indexOf('@') < 0) // sender is phone
                     makeCall(mSender);
@@ -205,23 +217,23 @@ public class SMSListener extends Service {
             Log.e(TAG, "Error making phone call: " + sex.getMessage());
         }
     }
-
-    public void replyToSender (String msg) {
+    // Takes a message and an attachment
+    public void replyToSender (String msg, String filename) {
         if (mSender.indexOf('@') < 0) { // sender is phone
             sendSMSMessage(msg);
         } else { // sender is email address
-            sendEmail(msg);
+            sendEmail(msg, filename);
         }
     }
 
-    public void sendEmail(final String msg) {
+    public void sendEmail(final String msg, final String filename) {
         Thread mailSender = new Thread() {
             public void run() {
                 try {
                     GMailSender sender = new GMailSender(mMyEmail,
                             mPassword);
                     sender.sendMail(mSubject, msg,
-                            mMyEmail, mSender);
+                            mMyEmail, mSender, filename);
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage(), e);
                 }

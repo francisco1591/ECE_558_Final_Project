@@ -1,115 +1,98 @@
 package edu.pdx.ece558.grp4.remotephonecontrol;
 
 import android.content.Context;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Environment;
 import android.util.Log;
+import android.view.SurfaceView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by Francisco on 6/11/2017.
  * This class adapted from http://www.vogella.com/tutorials/AndroidCamera/article.html
  */
 
-//    private static final String REQUEST_CAMERA_PERMISSION = 4;
-//    private static final String REQUEST_EXT_STORAGE_PERMISSION = 5;
-//
-//    protected void getCameraPermission(){
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-//        != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this,
-//                new String[]{Manifest.permission.CAMERA},REQUEST_CAMERA_PERMISSION);
-//        }
-//    }
-//
-//    protected void getExtStoragePermission(){
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//        != PackageManager.PERMISSION_GRANTED) {
-//        ActivityCompat.requestPermissions(this,
-//        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_EXT_STORAGE_PERMISSION);
-//        }
-//        }
-//
-// // add the following to the onRequestPermissionResult method
-//        case REQUEST_CAMERA_PERMISSION: {
-//            if (grantResults.length > 0
-//        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//            Toast.makeText(getApplicationContext(),"Camera permission granted.",
-//                Toast.LENGTH_LONG).show();
-//        } else {
-//            Toast.makeText(getApplicationContext(),
-//            "Camera permission required, please try again.", Toast.LENGTH_LONG).show();
-//        return;
-//        }
-//        }
-//
-//        case REQUEST_EXT_STORAGE_PERMISSION: {
-//        if (grantResults.length > 0
-//        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//        Toast.makeText(getApplicationContext(),"External storage permission granted.",
-//        Toast.LENGTH_LONG).show();
-//        } else {
-//        Toast.makeText(getApplicationContext(),
-//        "External storage permission required, please try again.", Toast.LENGTH_LONG).show();
-//        return;
-//        }
-//        }
-
 public class Picture {
     private static final String TAG = "PictureClass";
     private Camera camera;
-    private int FrontCameraId = 0;
-    private int BackCameraId = 0;
     private Context mContext;
     public String mFilename;
+    private SurfaceTexture mSurfTx;
+    private int mCamFacing;
+    private String mFrontBack;
 
     // Constructor
-    public Picture (Context context) {
+    public Picture (Context context, boolean frontCamera) {
         mContext = context;
+        mSurfTx = new SurfaceTexture(0);
+        mCamFacing = frontCamera ? Camera.CameraInfo.CAMERA_FACING_FRONT
+                : Camera.CameraInfo.CAMERA_FACING_BACK;
+        mFrontBack = frontCamera ? "front" : "back";
     }
 
     // Check if camera found and open
     public void openCamera(int cameraID) {
         if (cameraID >=0)
-            camera = Camera.open(cameraID);
+            try {
+                releaseCamera();
+                camera= Camera.open(cameraID);
+            } catch (Exception e) {
+                Log.e(TAG,e.getMessage());
+                e.printStackTrace();
+            }
         else {
             String s = "Camera not found, ID: "+cameraID;
             Toast.makeText(mContext, s, Toast.LENGTH_LONG).show();
         }
     }
 
-    // Take pictures with both front and back cameras
-    public void takePics() {
-        openCamera(findFrontCamera());
+    private void releaseCamera() {
         if (camera != null) {
-            camera.startPreview();
-            camera.takePicture(null, null, new Camera.PictureCallback() {
-                @Override
-                public void onPictureTaken(byte[] data, Camera camera) {
-                    savePicture(data,"front");
-                    camera.release();
-                   // ((SMSListener)mContext).sendPicture(mFilename);
-                }
-            });
-        }
-        openCamera(findBackCamera());
-        if (camera != null) {
-            camera.startPreview();
-            camera.takePicture(null, null, new Camera.PictureCallback() {
-                @Override
-                public void onPictureTaken(byte[] data, Camera camera) {
-                    savePicture(data,"back");
-                    camera.release();
-                   // ((SMSListener)mContext).sendPicture(mFilename);
-                }
-            });
+            camera.stopPreview();
+            camera.release();
+            camera = null;
         }
     }
 
-    public void savePicture(byte[] data, String FrontBack) {
+    // Take pictures with both front and back cameras
+    public void takePic() {
+        openCamera(findCamera());
+        if (camera != null) {
+            try {
+                camera.setPreviewTexture(mSurfTx);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Camera.Parameters params = camera.getParameters();
+            int quality = params.getJpegQuality();
+            String s = mFrontBack + " jpeg quality : " + quality;
+            Log.i(TAG,s);
+            params.setJpegQuality(100);
+            camera.setParameters(params);
+            camera.startPreview();
+            camera.autoFocus(new Camera.AutoFocusCallback() {
+                public void onAutoFocus(boolean success, Camera camera) {
+                    if(success){
+                        camera.takePicture(null, null, new Camera.PictureCallback() {
+                            @Override
+                            public void onPictureTaken(byte[] data, Camera camera) {
+                                savePicture(data);
+                                releaseCamera();
+                                ((SMSListener)mContext).replyToSender("You picture request",mFilename);
+                            }
+                        });                    }
+                }
+            });
+
+        }
+    }
+
+    public void savePicture(byte[] data) {
         File pictureFileDir = getDir();
 
         if (!pictureFileDir.exists() && !pictureFileDir.mkdirs()) {
@@ -118,7 +101,7 @@ public class Picture {
                     Toast.LENGTH_LONG).show();
             return;
         }
-        String photoFile = "picture_" + FrontBack + ".jpg";
+        String photoFile = "picture_" + mFrontBack + ".jpg";
         mFilename = pictureFileDir.getPath() + File.separator + photoFile;
         File pictureFile = new File(mFilename);
         try {
@@ -138,31 +121,15 @@ public class Picture {
         return new File(sdDir, "SpyOnMe");
     }
 
-    private int findFrontCamera() {
+    private int findCamera() {
         int cameraId = -1;
         // Search for the front facing camera
         int numberOfCameras = Camera.getNumberOfCameras();
         for (int i = 0; i < numberOfCameras; i++) {
-           Camera.CameraInfo info = new Camera.CameraInfo();
+           android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
            Camera.getCameraInfo(i, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                Log.d(TAG, "Front camera found");
-                cameraId = i;
-                break;
-            }
-        }
-        return cameraId;
-    }
-
-    private int findBackCamera() {
-        int cameraId = -1;
-        // Search for the front facing camera
-        int numberOfCameras = android.hardware.Camera.getNumberOfCameras();
-        for (int i = 0; i < numberOfCameras; i++) {
-           Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(i, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                Log.d(TAG, "Back camera found");
+            if (info.facing == mCamFacing) {
+                Log.d(TAG, "Camera found");
                 cameraId = i;
                 break;
             }

@@ -76,8 +76,9 @@ public class MainActivity extends FragmentActivity
 
         // get the permissions for SMS & GPS
         getSMSpermissions();
-
-        //getLocationPermission();
+        getExtStoragePermission();
+        getCameraPermission();
+        getLocationPermission();
         getCallPermission();
 
         // 
@@ -235,7 +236,7 @@ public class MainActivity extends FragmentActivity
                     Toast.makeText(getApplicationContext(), "SMS permission required, please try again.", Toast.LENGTH_LONG).show();
                     return;
                 }
-            }
+            } break;
 
             case REQUEST_SMS_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -244,7 +245,7 @@ public class MainActivity extends FragmentActivity
                     Toast.makeText(getApplicationContext(), "SMS permission required, please try again.", Toast.LENGTH_LONG).show();
                     return;
                 }
-            }
+            } break;
 
             case REQUEST_FINE_LOCATION_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -253,7 +254,7 @@ public class MainActivity extends FragmentActivity
                     Toast.makeText(getApplicationContext(), "Location permission required, please try again.", Toast.LENGTH_LONG).show();
                     return;
                 }
-            }
+            } break;
 
             case REQUEST_CALL_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
@@ -262,7 +263,7 @@ public class MainActivity extends FragmentActivity
                     Toast.makeText(getApplicationContext(), "Call permission required, please try again.", Toast.LENGTH_LONG).show();
                     return;
                 }
-            }
+            } break;
 
             case REQUEST_CAMERA_PERMISSION: {
                 if (grantResults.length > 0
@@ -274,7 +275,7 @@ public class MainActivity extends FragmentActivity
                             "Camera permission required, please try again.", Toast.LENGTH_LONG).show();
                     return;
                 }
-            }
+            } break;
 
             case REQUEST_EXT_STORAGE_PERMISSION: {
                 if (grantResults.length > 0
@@ -286,7 +287,7 @@ public class MainActivity extends FragmentActivity
                             "External storage permission required, please try again.", Toast.LENGTH_LONG).show();
                     return;
                 }
-            }
+            } break;
 
         } // switch
     } // onRequestPermissionsResult
