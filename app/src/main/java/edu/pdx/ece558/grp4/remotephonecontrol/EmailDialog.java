@@ -9,8 +9,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.widget.EditText;
+import android.view.View;
 
 public class EmailDialog extends DialogFragment {
+
+    // UI Widgets
+    EditText edittext_email;
+    EditText edittext_password;
 
     ////////////////////
     // onCreateDialog //
@@ -27,28 +33,36 @@ public class EmailDialog extends DialogFragment {
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.dialog_email, null))
+        View v = inflater.inflate(R.layout.dialog_email, null);
 
-                // Create title for the dialog window
-                .setTitle(R.string.title_email_dialog)
+        // Wire up the EditText for email address
+        edittext_email = (EditText) v.findViewById(R.id.edittext_email);
 
-                // Add 'Set' action button
-                .setPositiveButton(R.string.actionbtn_set, new DialogInterface.OnClickListener() {
+        // Wire up the EditText for email account password
+        edittext_email = (EditText) v.findViewById(R.id.edittext_password);
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mListener.onEmailPositiveClick(EmailDialog.this);
-                    } // onClick
-                }) // setPositiveButton
+        // Create title for the dialog window
+        builder.setView(v).setTitle(R.string.title_email_dialog);
 
-                // Add the 'Cancel' action button
-                .setNegativeButton(R.string.actionbtn_cancel, new DialogInterface.OnClickListener() {
+        // Add 'Set' action button
+        builder.setPositiveButton(R.string.actionbtn_set, new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mListener.onEmailNegativeClick(EmailDialog.this);
-                    } // onClick
-                }); // setNegativeButton
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String strEmail = edittext_email.getText().toString();
+                String strPassword = edittext_password.getText().toString();
+                mListener.onEmailPositiveClick(strEmail, strPassword);
+            } // onClick
+        }); // setPositiveButton
+
+        // Add the 'Cancel' action button
+        builder.setNegativeButton(R.string.actionbtn_cancel, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Doesn't need to do anything for cancel
+            } // onClick
+        }); // setNegativeButton
 
         // Get the AlertDialog from create()
         return builder.create();
@@ -64,9 +78,8 @@ public class EmailDialog extends DialogFragment {
     // Each method passes the DialogFragment in case host needs to query it.
 
     public interface EmailDialogListener {
-        public void onEmailPositiveClick(DialogFragment dialog);
-        public void onEmailNegativeClick(DialogFragment dialog);
-    }
+        public void onEmailPositiveClick(String email, String password);
+    } // EmailDialogListener
 
     // Use this instance of the interface to deliver action events
     EmailDialogListener mListener;

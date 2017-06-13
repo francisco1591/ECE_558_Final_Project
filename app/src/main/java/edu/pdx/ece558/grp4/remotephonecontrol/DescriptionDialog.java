@@ -22,7 +22,6 @@ public class DescriptionDialog extends DialogFragment {
     TextView textviewPermission;
 
     // Private members
-
     String strTitle;
     String strDescription;
     String strSyntax;
@@ -69,6 +68,10 @@ public class DescriptionDialog extends DialogFragment {
         return builder.create();
 
     } // onCreateDialog
+
+    /////////////////////////
+    // updateDialogStrings //
+    /////////////////////////
 
     protected void updateDialogStrings(int textview_id) {
 

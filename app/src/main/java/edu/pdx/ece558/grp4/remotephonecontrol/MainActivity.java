@@ -1,5 +1,11 @@
 package edu.pdx.ece558.grp4.remotephonecontrol;
 
+// TODO : Disable appropriate toggles when SMS & Email are turned off
+// TODO : Color the toggles more clearly between on & off
+// TODO : Turn the permissions on & off within the toggles
+// TODO : Handle password & email
+// TODO : Fix bug with infinitely restarting SMSListener
+
 /////////////////////
 // Android Imports //
 /////////////////////
@@ -311,7 +317,7 @@ public class MainActivity extends FragmentActivity
     ////////////////////////
     // refreshSMSListener //
     ////////////////////////
-    protected void refreshSMSListener() {
+    private void refreshSMSListener() {
 
         Intent intent = new Intent(getBaseContext(), SMSListener.class);
 
@@ -326,36 +332,21 @@ public class MainActivity extends FragmentActivity
     ////////////////////////////
 
     @Override
-    public void onKeywordPositiveClick(DialogFragment dialog) {
-        // TODO : Handle case when user hit the 'Set' button
+    public void onKeywordPositiveClick(String keyword) {
+        mKeyword = keyword;
+        refreshSMSListener();
     } // onKeywordPositiveClick
-
-    ////////////////////////////
-    // onKeywordNegativeClick //
-    ////////////////////////////
-
-    @Override
-    public void onKeywordNegativeClick(DialogFragment dialog) {
-        // TODO : Handle case when user hit the 'Cancel' button
-    } // onKeywordNegativeClick
 
     ////////////////////////////
     // onEmailPositiveClick //
     ////////////////////////////
 
     @Override
-    public void onEmailPositiveClick(DialogFragment dialog) {
-        // TODO : Handle case when user hit the 'Set' button
+    public void onEmailPositiveClick(String email, String password) {
+        mMyEmail = email;
+        mPassword = password;
+        refreshSMSListener();
     } // onEmailPositiveClick
-
-    //////////////////////////
-    // onEmailNegativeClick //
-    //////////////////////////
-
-    @Override
-    public void onEmailNegativeClick(DialogFragment dialog) {
-        // TODO : Handle case when user hit the 'Cancel' button
-    } // onEmailNegativeClick
 
     ///////////////////////
     // getSMSpermissions //

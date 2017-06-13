@@ -10,13 +10,12 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.widget.EditText;
-
+import android.view.View;
 
 public class KeywordDialog extends DialogFragment {
 
     // UI Widgets
-
-    EditText mEditTextKeyword;
+    EditText edittext_keyword;
 
     ////////////////////
     // onCreateDialog //
@@ -33,28 +32,32 @@ public class KeywordDialog extends DialogFragment {
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.dialog_keyword, null))
+        View v = inflater.inflate(R.layout.dialog_keyword, null);
 
-            // Create title for the dialog window
-            .setTitle(R.string.title_keyword_dialog)
+        // Wire up the EditText for keyword
+        edittext_keyword = (EditText) v.findViewById(R.id.edittext_keyword);
 
-            // Add 'Set' action button
-            .setPositiveButton(R.string.actionbtn_set, new DialogInterface.OnClickListener() {
+        // Create title for the dialog window
+        builder.setView(v).setTitle(R.string.title_keyword_dialog);
+
+        // Add 'Set' action button
+        builder.setPositiveButton(R.string.actionbtn_set, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String strKeyword = edittext_keyword.getText().toString();
+                mListener.onKeywordPositiveClick(strKeyword);
+            } // onClick
+        }); // setPositiveButton
+
+        // Add the 'Cancel' action button
+            builder.setNegativeButton(R.string.actionbtn_cancel, new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    mListener.onKeywordPositiveClick(KeywordDialog.this);
+                    // Doesn't need to do anything for cancel
                 } // onClick
-            }) // setPositiveButton
-
-            // Add the 'Cancel' action button
-                .setNegativeButton(R.string.actionbtn_cancel, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mListener.onKeywordNegativeClick(KeywordDialog.this);
-                    } // onClick
-                }); // setNegativeButton
+            }); // setNegativeButton
 
         // Get the AlertDialog from create()
         return builder.create();
@@ -70,9 +73,8 @@ public class KeywordDialog extends DialogFragment {
     // Each method passes the DialogFragment in case host needs to query it.
 
     public interface KeywordDialogListener {
-        public void onKeywordPositiveClick(DialogFragment dialog);
-        public void onKeywordNegativeClick(DialogFragment dialog);
-    }
+        public void onKeywordPositiveClick(String keyword);
+    } // KeywordDialogListener
 
     // Use this instance of the interface to deliver action events
     KeywordDialogListener mListener;
