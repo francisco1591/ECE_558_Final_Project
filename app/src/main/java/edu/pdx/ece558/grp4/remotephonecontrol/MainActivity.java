@@ -1,7 +1,6 @@
 package edu.pdx.ece558.grp4.remotephonecontrol;
 
 // TODO : Color the toggles more clearly between on & off
-// TODO : Turn the permissions on & off within the toggles
 // TODO : Fix bug with infinitely restarting SMSListener
 
 /////////////////////
@@ -87,13 +86,6 @@ public class MainActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // get the permissions for all services
-        getSMSpermissions();
-        getLocationPermission();
-        getCallPermission();
-        getCameraPermission();
-        getExtStoragePermission();
-
         // Load the previous values for user preference...
         // i.e. whether SMS control, email control, location are allowed
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -118,6 +110,8 @@ public class MainActivity extends FragmentActivity
             public void onClick(View v) {
 
                 mRemoteLocation = toggleLocation.isChecked();
+                if (mRemoteLocation) {getLocationPermission();}
+
                 refreshSMSListener();
             } // onCheckedChanged
 
@@ -132,6 +126,7 @@ public class MainActivity extends FragmentActivity
             public void onClick(View v) {
 
                 mPhoneResponse = togglePhone.isChecked();
+                if (mPhoneResponse) {getCallPermission();}
                 refreshSMSListener();
             } // onCheckedChanged
 
@@ -160,6 +155,10 @@ public class MainActivity extends FragmentActivity
             public void onClick(View v) {
 
                 mTakePicture = togglePicture.isChecked();
+                if (mTakePicture) {
+                    getCameraPermission();
+                    getExtStoragePermission();
+                }
                 refreshSMSListener();
             } // onCheckedChanged
 
@@ -205,6 +204,9 @@ public class MainActivity extends FragmentActivity
                 mSMSControl = toggleSMS.isChecked();
 
                 if (mSMSControl) {
+                    // get the necessary permissions
+                    getSMSpermissions();
+
                     // enable the toggle controls again
                     toggleEmail.setEnabled(true);
                     toggleLocation.setEnabled(true);
@@ -354,7 +356,7 @@ public class MainActivity extends FragmentActivity
     ////////////////////////
     // refreshSMSListener //
     ////////////////////////
-    private void refreshSMSListener() {
+    private synchronized void refreshSMSListener() {
 
         Intent intent = new Intent(getBaseContext(), SMSListener.class);
 
