@@ -18,6 +18,7 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
 import java.util.Arrays;
+import java.util.Hashtable;
 
 /**
  * Created by Francisco on 6/9/2017.
@@ -38,9 +39,18 @@ public class SMSListener extends Service {
     boolean mSMSControl;
     boolean mEmailResponse;
     boolean mRemoteLocation;
+    boolean mPhoneResponse;
+    boolean mPlaySound;
+    boolean mTakePicture;
     String mKeyword;
     String mPassword;
     String mMyEmail;
+
+    private static final Hashtable<String,String> MMSgateway = new Hashtable<String,String>() {{
+        put("v","@vzwpix.com");
+
+    }};
+
 //    private Context mContext;
 
     @Nullable
@@ -66,10 +76,17 @@ public class SMSListener extends Service {
         mSMSControl = settings.getBoolean("SMSControl", false);
         mEmailResponse = settings.getBoolean("EmailControl", false);
         mRemoteLocation = settings.getBoolean("RemoteLocation", false);
+        mPhoneResponse = settings.getBoolean("PhoneResponse", false);
+        mPlaySound = settings.getBoolean("PlaySound", false);
+        mTakePicture = settings.getBoolean("TakePicture", false);
+
+        mKeyword = settings.getString("Keyword", "");
+        mMyEmail = settings.getString("EmailAddress", "");
+        mPassword = settings.getString("Password", "");
         //also get password and email
-        mKeyword = "HearMe!";
-        mMyEmail = "francisco1591@gmail.com";
-        mPassword = "iha.sari";
+        //mKeyword = "HearMe!";
+        //mMyEmail = "francisco1591@gmail.com";
+        //mPassword = "iha.sari";
 //        mContext = this;
 
 
