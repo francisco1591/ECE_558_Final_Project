@@ -1,9 +1,7 @@
 package edu.pdx.ece558.grp4.remotephonecontrol;
 
-// TODO : Disable appropriate toggles when SMS & Email are turned off
 // TODO : Color the toggles more clearly between on & off
 // TODO : Turn the permissions on & off within the toggles
-// TODO : Handle password & email
 // TODO : Fix bug with infinitely restarting SMSListener
 
 /////////////////////
@@ -111,54 +109,15 @@ public class MainActivity extends FragmentActivity
         mMyEmail = settings.getString("EmailAddress", "");
         mPassword = settings.getString("Password", "");
 
-        // Wire up the toggle to enable SMS control
-        toggleSMS = (ToggleButton) findViewById(R.id.toggle_SMS);
-        toggleSMS.setChecked(mSMSControl);
-        toggleSMS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                mSMSControl = isChecked;
-
-                if (isChecked) {
-                    // Create the KeywordDialog fragment and show it
-                    DialogFragment dialog = new KeywordDialog();
-                    dialog.show(getFragmentManager(), "KeywordDialogFragment");
-                }
-
-                refreshSMSListener();
-            } // onCheckedChanged
-
-        }); // onCheckedChangeListener
-
-        // Wire up the toggle to enable Email control
-        toggleEmail = (ToggleButton) findViewById(R.id.toggle_Email);
-        toggleEmail.setChecked(mEmailResponse);
-        toggleEmail.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                mEmailResponse = isChecked;
-
-                if (isChecked) {
-                    // Create the dialog fragment and show it
-                    DialogFragment dialog = new EmailDialog();
-                    dialog.show(getFragmentManager(), "EmailDialogFragment");
-                }
-
-                refreshSMSListener();
-            } // onCheckedChanged
-
-        }); // OnCheckedChangeListener
-
         // Wire up the toggle to enable Location reporting
         toggleLocation = (ToggleButton) findViewById(R.id.toggle_Location);
         toggleLocation.setChecked(mRemoteLocation);
-        toggleLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        toggleLocation.setEnabled(mSMSControl);
+        toggleLocation.setOnClickListener(new View.OnClickListener() {
 
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onClick(View v) {
 
-                mRemoteLocation = isChecked;
+                mRemoteLocation = toggleLocation.isChecked();
                 refreshSMSListener();
             } // onCheckedChanged
 
@@ -167,11 +126,12 @@ public class MainActivity extends FragmentActivity
         // Wire up the toggle to enable Phone response
         togglePhone = (ToggleButton) findViewById(R.id.toggle_Phone);
         togglePhone.setChecked(mPhoneResponse);
-        togglePhone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        togglePhone.setEnabled(mSMSControl);
+        togglePhone.setOnClickListener(new View.OnClickListener() {
 
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onClick(View v) {
 
-                mPhoneResponse = isChecked;
+                mPhoneResponse = togglePhone.isChecked();
                 refreshSMSListener();
             } // onCheckedChanged
 
@@ -180,11 +140,12 @@ public class MainActivity extends FragmentActivity
         // Wire up the toggle to enable Sound to play
         toggleSound = (ToggleButton) findViewById(R.id.toggle_Sound);
         toggleSound.setChecked(mPlaySound);
-        toggleSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        toggleSound.setEnabled(mSMSControl);
+        toggleSound.setOnClickListener(new View.OnClickListener() {
 
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onClick(View v) {
 
-                mPlaySound = isChecked;
+                mPlaySound = toggleSound.isChecked();
                 refreshSMSListener();
             } // onCheckedChanged
 
@@ -193,15 +154,91 @@ public class MainActivity extends FragmentActivity
         // Wire up the toggle to enable Camera to take picture
         togglePicture = (ToggleButton) findViewById(R.id.toggle_Picture);
         togglePicture.setChecked(mTakePicture);
-        togglePicture.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        togglePicture.setEnabled(mEmailResponse);
+        togglePicture.setOnClickListener(new View.OnClickListener() {
 
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onClick(View v) {
 
-                mTakePicture = isChecked;
+                mTakePicture = togglePicture.isChecked();
                 refreshSMSListener();
             } // onCheckedChanged
 
         }); // OnCheckedChangeListener
+
+        // Wire up the toggle to enable Email control
+        toggleEmail = (ToggleButton) findViewById(R.id.toggle_Email);
+        toggleEmail.setChecked(mEmailResponse);
+        toggleEmail.setEnabled(mSMSControl);
+        toggleEmail.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+
+                mEmailResponse = toggleEmail.isChecked();
+
+                if (mEmailResponse) {
+                    // enable the picture toggle again
+                    if(mSMSControl) {togglePicture.setEnabled(true);}
+
+                    // Create the dialog fragment and show it
+                    DialogFragment dialog = new EmailDialog();
+                    dialog.show(getFragmentManager(), "EmailDialogFragment");
+                }
+
+                else {
+                    togglePicture.setChecked(false);
+                    togglePicture.setEnabled(false);
+                    mTakePicture = false;
+                }
+
+                refreshSMSListener();
+            } // onCheckedChanged
+
+        }); // OnCheckedChangeListener
+
+        // Wire up the toggle to enable SMS control
+        toggleSMS = (ToggleButton) findViewById(R.id.toggle_SMS);
+        toggleSMS.setChecked(mSMSControl);
+        toggleSMS.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+
+                mSMSControl = toggleSMS.isChecked();
+
+                if (mSMSControl) {
+                    // enable the toggle controls again
+                    toggleEmail.setEnabled(true);
+                    toggleLocation.setEnabled(true);
+                    togglePhone.setEnabled(true);
+                    toggleSound.setEnabled(true);
+                    if (mTakePicture) {togglePicture.setEnabled(true);};
+
+                    // Create the KeywordDialog fragment and show it
+                    DialogFragment dialog = new KeywordDialog();
+                    dialog.show(getFragmentManager(), "KeywordDialogFragment");
+                }
+
+                else {
+                    // turn off everything, since they all depend on SMS control
+                    toggleEmail.setChecked(false);
+                    toggleEmail.setEnabled(false);
+                    mEmailResponse = false;
+                    toggleLocation.setChecked(false);
+                    toggleLocation.setEnabled(false);
+                    mRemoteLocation = false;
+                    togglePhone.setChecked(false);
+                    togglePhone.setEnabled(false);
+                    mPhoneResponse = false;
+                    toggleSound.setChecked(false);
+                    toggleSound.setEnabled(false);
+                    mPlaySound = false;
+                    togglePicture.setChecked(false);
+                    togglePicture.setEnabled(false);
+                    mTakePicture = false;
+                }
+                refreshSMSListener();
+            } // onCheckedChanged
+
+        }); // onCheckedChangeListener
 
         // Wire up the "SMS Control" text item
         textviewSMS = (TextView) findViewById(R.id.textview_SMS);
