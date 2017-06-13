@@ -1,6 +1,9 @@
 package edu.pdx.ece558.grp4.remotephonecontrol;
 
-/* Taken from https://medium.com/@ssaurel/how-to-send-an-email-with-javamail-api-in-android-2fc405441079
+/**
+ * Created by Francisco on 6/9/2017.
+ */
+/* Adapted from https://medium.com/@ssaurel/how-to-send-an-email-with-javamail-api-in-android-2fc405441079
 *
  */
 
@@ -21,9 +24,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-/**
- * Created by Francisco on 6/9/2017.
- */
+
 public class GMailSender extends javax.mail.Authenticator {
     private String mailhost = "smtp.gmail.com";
     private String user;
@@ -57,17 +58,6 @@ public class GMailSender extends javax.mail.Authenticator {
 
     public synchronized void sendMail(String subject, String body,
                                       String sender, String recipients, String filename) throws Exception {
-//        MimeMessage message = new MimeMessage(session);
-//        DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), "text/plain"));
-//        message.setSender(new InternetAddress(sender));
-//        message.setSubject(subject);
-//        message.setDataHandler(handler);
-//
-//        if (recipients.indexOf(',') > 0)
-//            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
-//        else
-//            message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
-
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(sender));
         if (recipients.indexOf(',') > 0)

@@ -32,6 +32,7 @@ public class SMSListener extends Service {
     String mMessage;
     String mPhoneNo;
     String mSender;
+    String mGateway;
     private boolean go;
     private ReceiveSMS receiveSMS; //BroadcastReceiver
     private String mSubject;
@@ -46,12 +47,18 @@ public class SMSListener extends Service {
     String mPassword;
     String mMyEmail;
 
-    private static final Hashtable<String,String> MMSgateway = new Hashtable<String,String>() {{
-        put("v","@vzwpix.com");
 
+    private static final Hashtable<String,String> MMSgateway = new Hashtable<String,String>() {{
+        put("at","@mms.att.net"); // at&t
+        put("bo","@myboostmobile.com"); // boost
+        put("cr", "@mms.cricketwireless.net"); // cricket
+        put("sp", "@pm.sprint.com"); // sprint
+        put("tm", "@tmomail.net"); // t-mobile
+        put("us","@mms.uscc.net"); // us cellular
+        put("ve","@vzwpix.com"); // verizon wireless
+        put("vi","@vmpix.com"); // virgin mobile
     }};
 
-//    private Context mContext;
 
     @Nullable
     @Override
@@ -83,12 +90,6 @@ public class SMSListener extends Service {
         mKeyword = settings.getString("Keyword", "");
         mMyEmail = settings.getString("EmailAddress", "");
         mPassword = settings.getString("Password", "");
-        //also get password and email
-        //mKeyword = "HearMe!";
-        //mMyEmail = "francisco1591@gmail.com";
-        //mPassword = "iha.sari";
-//        mContext = this;
-
 
         // Let it continue running until it is stopped.
         Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
@@ -160,24 +161,60 @@ public class SMSListener extends Service {
         String command = words[j+1];
         switch (command){
             case "find": case "Find":
+                // check if feature enabled, and email enabled in case of email sender
+                if (!mRemoteLocation || (mSender.indexOf('@') > 0 && !mEmailResponse) )
+                    return;
                 mSubject = "Response to location request";
+
                 getLocation();
                 break;
-            case "picture": case "Picture": {
-                if (mSender.indexOf('@') < 0) // sender is phone
-                    break; // only email supported for picture
+            case "pic": case "Pic": {
+                // check if feature enabled
+                if (!mTakePicture)
+                    return;
                 mSubject = "Response to picture request";
                 boolean frontCamera = true; // default
-                // check for back camera option
-                if (words.length > j+2 )  {
-                    if (words[j+2].equals("back"))
-                        frontCamera = false;
+                boolean flash = false; // default
+                if (mSender.indexOf('@') < 0) {// sender is phone, must have carrier parameter
+                    if (words.length <= j + 2) // Didn't provide carrier parameter
+                        return;
+                    else {
+                        mGateway = mSender + MMSgateway.get(words[j+2]);
+                    }
+                    if (words.length > j + 3) {
+                        if (words[j + 3].equals("back")) { //checks for back camera option
+                            frontCamera = false;
+                            if (words.length > j + 4) { // if flash on, only on back camera
+                                if (words[j + 4].equals("flash"))
+                                    flash = true;
+                            }
+                        }
+                    }
+
+                } else { // sender is email
+                    // check if feature enabled
+                    if (!mEmailResponse)
+                        return;
+                    if (words.length > j + 2) {
+                        if (words[j + 2].equals("back")) { // checks for back camera option
+                            frontCamera = false;
+                            if (words.length > j + 3) {
+                                if (words[j + 3].equals("flash")) // if flash on, only on back cam
+                                    flash = true;
+                            }
+                        }
+                    }
+
                 }
                 Picture pic = new Picture(SMSListener.this, frontCamera);
+                pic.setFlash(flash);
                 pic.takePic();
                 break;
             }
             case "call": case "Call":
+                // check if feature enabled
+                if (!mPhoneResponse)
+                    return;
                 if (mSender.indexOf('@') < 0) // sender is phone
                     makeCall(mSender);
                     // else sender is email address, validate phone num
@@ -185,6 +222,9 @@ public class SMSListener extends Service {
                     makeCall(words[j+2]);
                 break;
             case "alert": case "Alert": {
+                // check if feature enabled
+                if (!mPlaySound)
+                    return;
                 int duration = 5; //default, seconds
                 // check if duration option included
                 if (words.length > j + 2 && words[j+2].matches("\\d+")) {
@@ -238,7 +278,12 @@ public class SMSListener extends Service {
     // Takes a message and an attachment
     public void replyToSender (String msg, String filename) {
         if (mSender.indexOf('@') < 0) { // sender is phone
-            sendSMSMessage(msg);
+            if (filename == null) {// no attachment
+                sendSMSMessage(msg);
+            } else {
+                mSender = mGateway;
+                sendEmail(msg,filename);
+            }
         } else { // sender is email address
             sendEmail(msg, filename);
         }

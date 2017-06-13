@@ -1,5 +1,10 @@
 package edu.pdx.ece558.grp4.remotephonecontrol;
 
+/**
+ * Created by Francisco on 6/11/2017.
+ * This class adapted from http://www.vogella.com/tutorials/AndroidCamera/article.html
+ */
+
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -11,11 +16,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-/**
- * Created by Francisco on 6/11/2017.
- * This class adapted from http://www.vogella.com/tutorials/AndroidCamera/article.html
- */
+import java.util.List;
 
 public class Picture {
     private static final String TAG = "PictureClass";
@@ -25,6 +26,7 @@ public class Picture {
     private SurfaceTexture mSurfTx;
     private int mCamFacing;
     private String mFrontBack;
+    private boolean mFlash;
 
     // Constructor
     public Picture (Context context, boolean frontCamera) {
@@ -33,6 +35,11 @@ public class Picture {
         mCamFacing = frontCamera ? Camera.CameraInfo.CAMERA_FACING_FRONT
                 : Camera.CameraInfo.CAMERA_FACING_BACK;
         mFrontBack = frontCamera ? "front" : "back";
+    }
+
+    // Setter
+    public void setFlash(boolean flash) {
+        mFlash = flash;
     }
 
     // Check if camera found and open
@@ -73,7 +80,15 @@ public class Picture {
             String s = mFrontBack + " jpeg quality : " + quality;
             Log.i(TAG,s);
             params.setJpegQuality(100);
-            params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+            params.setPreviewSize(1280, 720);
+            params.setPictureSize(1280, 720);
+            List<String> flashModes = params.getSupportedFlashModes();
+            if (mFlash && flashModes.contains(android.hardware.Camera.Parameters.FLASH_MODE_ON))
+            {
+                params.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+            } else {
+                params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            }
             camera.setParameters(params);
             camera.startPreview();
             camera.autoFocus(new Camera.AutoFocusCallback() {
@@ -84,7 +99,7 @@ public class Picture {
                             public void onPictureTaken(byte[] data, Camera camera) {
                                 savePicture(data);
                                 releaseCamera();
-                                ((SMSListener)mContext).replyToSender("You picture request",mFilename);
+                                ((SMSListener)mContext).replyToSender("Your picture request",mFilename);
                             }
                         });                    }
                 }
