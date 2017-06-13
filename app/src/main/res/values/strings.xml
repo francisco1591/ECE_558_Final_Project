@@ -5,30 +5,70 @@
     <!--Strings for MainActivity-->
 
     <string name="textview_SMS">SMS Control</string>
-    <string name="textview_Email">Email Response</string>
-    <string name="textview_Location">Remote Location</string>
-    <string name="textview_Phone">Phone Response</string>
-    <string name="textview_Sound">Play Sound</string>
+    <string name="textview_Email">Reply to Email</string>
+    <string name="textview_Location">Find Me</string>
+    <string name="textview_Phone">Call Me Back</string>
+    <string name="textview_Sound">Sound Alert</string>
     <string name="textview_Picture">Take Picture</string>
 
     <string name="toggle_on">ON</string>
     <string name="toggle_off">OFF</string>
 
-    <string name="description_SMS">This allows the phone to be controlled through SMS. When enabled, the phone can receive an SMS from either phone or email with keywords to control it.</string>
-    <string name="description_Email">This allows the phone to respond to sent commands through email. When enabled, the phone will send an email to the specified GMail account.</string>
-    <string name="description_Location">This allows the phone to respond to a sent command with it\'s current location. When enabled, the phone will respond to command with GPS coordinates.</string>
-    <string name="description_Phone">This allows the phone to respond to a sent command through phone service. When enabled, the phone will send a phone call to the number which texted it.</string>
-    <string name="description_Sound">This allows the phone to respond to a sent command by playing a sound. When enabled, the phone will play a sound to help determine its location in a room.</string>
-    <string name="description_Picture">This allows the phone to response to a sent command with a picture. When enabled, the phone will respond to command with a picture from the front-facing camera.</string>
+    <string name="description_SMS">This allows your phone to be controlled remotely through SMS.
+        You setup a secret keyword (keep it safe!) that will cause your phone to interpret the next
+        word(s) in your message as a command. Click on each feature to get its description and
+        learn how to use it, options inside brackets are optional. Each feature may be enabled
+        or disabled by clicking on the button next to it. Commands may start with either upper
+        or lowercase letter.</string>
+    <string name="description_Email">Enabling this option allows you
+            to text your phone from an email account via an SMS Gateway,
+            sending an email to the address 1234567890@carrierDomain.com, where the numbers to
+            the left of @ are your 10-digit phone number and the domain is specific to your
+            phone carrier. Your phone will then automatically reply to the sender email address.
+             You will need to provide login credentials to a Gmail account,
+            which will be used to send the response email on behalf of your phone.
+            IMPORTANT: You also need to authorize external access to your Gmail account
+             by enabling “less secure apps” in settings:
+             https://www.google.com/settings/security/lesssecureapps
+            before this feature will work. You can create a dummy gmail account if you don\'t
+            feel comfortable authorizing external access to your personal account.</string>
+    <string name="description_Location">This allows the phone to respond to the find command
+        with it\'s current or last known location. When enabled, the phone will respond to
+        command with GPS coordinates. Hint: Copy-paste GPS coords to google search bar
+        to get map</string>
+    <string name="description_Phone">This allows the phone to respond to the call command
+        through phone service. When enabled, the phone will call back the number which texted it,
+        unless a different number is specified.
+        Hints: To call a land line, text via email and add 10 digit phone number after command (no
+        dashes!).
+        Use this feature to listen to your phone\'s surroundings.</string>
+    <string name="description_Sound">This allows the phone to respond to the alert command
+        by playing a sound. When enabled, the phone will sound alert for specified duration or
+        default duration if option is ommitted. Hint: Use this command to find your phone inside your
+        house, it works even if you left the phone in silent mode.</string>
+    <string name="description_Picture">This allows the phone to respond to the pic command.
+        When enabled, the phone will respond to command with a picture. By default it uses
+        front camera, to use back camera add back option. Back camera can take picture using
+        flash when flash option is added after back option. IMPORTANT: if texting from another phone,
+        you must include a two letter idenfitier for the carrier of that phone.
+        Hint: Use the back flash options when you suspect you dropped your phone at your seat
+        in the movie theater. </string>
 
-
-    <string name="syntax_SMS">Syntax: &lt;Keyword&gt; sms</string>
-    <string name="syntax_Email">Syntax: &lt;Keyword&gt; email</string>
-    <string name="syntax_Location">Syntax: &lt;Keyword&gt; location</string>
-    <string name="syntax_Phone">Syntax: &lt;Keyword&gt; phone</string>
-    <string name="syntax_Sound">Syntax: &lt;Keyword&gt; sound</string>
-    <string name="syntax_Picture">Syntax: &lt;Keyword&gt; picture</string>
-
+    <string name="syntax_SMS">Syntax: \n&lt;Keyword&gt; command [option1 [option2]]</string>
+    <!--<string name="syntax_Email">Syntax: &lt;Keyword&gt; email</string>-->
+    <string name="syntax_Location">Syntax: &lt;Keyword&gt; find</string>
+    <string name="syntax_Phone">Syntax text from phone: \n&lt;Keyword&gt; call [1112223333] \n
+        Syntax text from email: \n&lt;Keyword&gt;  call 11122233331
+    </string>
+    <string name="syntax_Sound">Syntax: &lt;Keyword&gt; alert [15] \n
+        Note: Maximum duration is 25 s</string>
+    <string name="syntax_Picture">Syntax text from phone: \n&lt;Keyword&gt; pic cc [back [flash]] \n
+    Syntax text from email: \n&lt;Keyword&gt; pic [back [flash]] \n
+    cc is a two-letter identifier for the texting phone. Supported carriers: \n
+        at for at&amp;t, \t bo for boost mobile, \n
+        cr for cricket, \t  sp for sprint, \n
+        tm for t-mobile, \t us for us cellular,\n
+        ve for verizon, \t  vi for virgin mobile </string>
     <string name="permission_SMS">Permissions: requires SMS services</string>
     <string name="permission_Email">Permissions: requires Email services</string>
     <string name="permission_Location">Permissions: requires GPS services</string>

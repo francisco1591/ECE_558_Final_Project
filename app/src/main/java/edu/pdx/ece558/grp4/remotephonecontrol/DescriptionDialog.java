@@ -87,7 +87,7 @@ public class DescriptionDialog extends DialogFragment {
             case (MainActivity.ID_EMAIL) :
                 strTitle = getResources().getString(R.string.textview_Email);
                 strDescription = getResources().getString(R.string.description_Email);
-                strSyntax = getResources().getString(R.string.syntax_Email);
+                //strSyntax = getResources().getString(R.string.syntax_Email);
                 strPermission = getResources().getString(R.string.permission_Email);
                 break;
 
