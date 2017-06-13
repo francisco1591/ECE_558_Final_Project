@@ -17,13 +17,16 @@
 
         <ToggleButton
             android:id="@+id/toggle_SMS"
-            android:textOn="@string/enabled_SMS"
-            android:textOff="@string/disabled_SMS"
-            android:layout_width="wrap_content"
+            android:textOn="@string/toggle_on"
+            android:textOff="@string/toggle_off"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/textview_SMS"
             android:textSize="18dp"
@@ -42,19 +45,23 @@
         android:gravity="center">
 
         <ToggleButton
-            android:id="@+id/toggle_email"
-            android:textOn="@string/enabled_email"
-            android:textOff="@string/disabled_email"
-            android:layout_width="wrap_content"
+
+            android:id="@+id/toggle_Email"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:textOn="@string/toggle_on"
+            android:textOff="@string/toggle_off"
+            android:layout_width="0dp"
             android:layout_height="wrap_content" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/textview_email"
+            android:text="@string/textview_Email"
             android:textSize="18dp"
             android:layout_marginLeft="18dp"
-            android:id="@+id/textview_email"
+            android:id="@+id/textview_Email"
             android:clickable="true" />
 
     </LinearLayout>
@@ -64,46 +71,111 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginBottom="12dp">
+        android:gravity="center">
 
         <ToggleButton
-            android:id="@+id/toggle_location"
-            android:textOn="@string/enabled_location"
-            android:textOff="@string/disabled_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:id="@+id/toggle_Location"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:textOn="@string/toggle_on"
+            android:textOff="@string/toggle_off"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/textview_location"
+            android:text="@string/textview_Location"
             android:textSize="18sp"
             android:layout_marginLeft="18dp"
-            android:id="@+id/textview_location"
+            android:id="@+id/textview_Location"
             android:clickable="true" />
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
-        android:id="@+id/textview_description"
-        android:textSize="12dp"
-        android:layout_marginBottom="12dp" />
+    <LinearLayout
 
-    <TextView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textview_syntax"
-        android:layout_marginBottom="12dp" />
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center" >
 
-    <TextView
-        android:layout_width="wrap_content"
+        <ToggleButton
+            android:id="@+id/toggle_Phone"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:textOn="@string/toggle_on"
+            android:textOff="@string/toggle_off"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/textview_Phone"
+            android:textSize="18sp"
+            android:layout_marginLeft="18dp"
+            android:id="@+id/textview_Phone"
+            android:clickable="true" />
+
+    </LinearLayout>
+
+    <LinearLayout
+
         android:layout_height="wrap_content"
-        android:id="@+id/textview_permission"
-        android:layout_marginBottom="12dp" />
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center" >
+
+        <ToggleButton
+            android:id="@+id/toggle_Sound"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:textOn="@string/toggle_on"
+            android:textOff="@string/toggle_off"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/textview_Sound"
+            android:textSize="18sp"
+            android:layout_marginLeft="18dp"
+            android:id="@+id/textview_Sound"
+            android:clickable="true" />
+
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center" >
+
+        <ToggleButton
+            android:id="@+id/toggle_Picture"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:textOn="@string/toggle_on"
+            android:textOff="@string/toggle_off"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/textview_Picture"
+            android:textSize="18sp"
+            android:layout_marginLeft="18dp"
+            android:id="@+id/textview_Picture"
+            android:clickable="true" />
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -37,7 +37,7 @@ public class EmailDialog extends DialogFragment {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // TODO : Accept the email
+                        mListener.onEmailPositiveClick(EmailDialog.this);
                     } // onClick
                 }) // setPositiveButton
 
@@ -46,7 +46,7 @@ public class EmailDialog extends DialogFragment {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // TODO : Cancel the entry
+                        mListener.onEmailNegativeClick(EmailDialog.this);
                     } // onClick
                 }); // setNegativeButton
 
