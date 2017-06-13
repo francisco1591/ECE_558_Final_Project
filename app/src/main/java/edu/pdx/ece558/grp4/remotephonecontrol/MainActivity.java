@@ -40,6 +40,9 @@ public class MainActivity extends FragmentActivity
     // File to save SharedPreferences in
     public static final String PREFS_NAME ="RemotePhoneControl";
 
+    // Extra data being passed from MainActivity --> HomeActivity
+    public static final String EXTRA_KEYWORD = "edu.pdx.ece558.grp4.remotephonecontrol.keyword_result";
+
     // Constant IDs for determining permissions
     private static final int REQUEST_SMS_PERMISSION = 0;
     private static final int REQUEST_SEND_SMS_PERMISSION = 1;
@@ -237,6 +240,7 @@ public class MainActivity extends FragmentActivity
                     mTakePicture = false;
                 }
                 refreshSMSListener();
+
             } // onCheckedChanged
 
         }); // onCheckedChangeListener
@@ -324,6 +328,7 @@ public class MainActivity extends FragmentActivity
     protected void onStop() {
 
         super.onStop();
+        setKeywordResult();
         saveSettings();
 
     } // onStop
@@ -534,5 +539,16 @@ public class MainActivity extends FragmentActivity
         return dialog;
 
     } // newDescriptionDialog
+
+    //////////////////////
+    // setKeywordResult //
+    //////////////////////
+
+    // make sure HomeActivity gets updated with new keywords
+    private void setKeywordResult() {
+        Intent data = new Intent();
+        data.putExtra(EXTRA_KEYWORD, mKeyword);
+        setResult(RESULT_OK, data);
+    } // setKeywordResult
 
 } // MainActivity

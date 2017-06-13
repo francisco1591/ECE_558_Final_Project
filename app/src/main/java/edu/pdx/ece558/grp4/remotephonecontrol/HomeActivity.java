@@ -11,6 +11,8 @@ import android.support.v4.app.*;
 import android.view.View;
 import android.widget.*;
 
+import static edu.pdx.ece558.grp4.remotephonecontrol.MainActivity.EXTRA_KEYWORD;
+
 
 public class HomeActivity extends FragmentActivity
         implements KeywordDialog.KeywordDialogListener {
@@ -44,7 +46,6 @@ public class HomeActivity extends FragmentActivity
         // otherwise, set keyword to empty
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         mKeyword = settings.getString("Keyword", "");
-
 
         button_keyword = (Button) findViewById(R.id.button_keyword);
         button_keyword.setOnClickListener(new View.OnClickListener() {
@@ -87,5 +88,19 @@ public class HomeActivity extends FragmentActivity
             Toast.makeText(getApplicationContext(),"Incorrect keyword!", Toast.LENGTH_SHORT).show();
         }
     } // onKeywordPositiveClick
+
+    //////////////////////
+    // onActivityResult //
+    //////////////////////
+
+    // check the current keyword value
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == ACTIVITY_MAIN) {
+            if (data == null) return;
+            else {mKeyword = data.getStringExtra(MainActivity.EXTRA_KEYWORD);}
+        }
+    } // onActivityResult
 
 } // HomeActivity
