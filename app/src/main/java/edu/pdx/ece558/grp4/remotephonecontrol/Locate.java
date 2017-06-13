@@ -22,6 +22,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
+
 // Rehan adding a test comment for pushing demo
 public class Locate {
     private static final String TAG = "LocateClass";
@@ -89,6 +91,7 @@ public class Locate {
     }
 
     public void getLastKnownLocation() {
+        DecimalFormat df = new DecimalFormat("#.##");
         try {
             Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             saveLocation(location);
@@ -96,10 +99,11 @@ public class Locate {
             Log.e(TAG, "Error creating location service: " + sex.getMessage());
         }
         double age_min = (SystemClock.elapsedRealtimeNanos()-mBestLocation.getElapsedRealtimeNanos() ) / 60.0e9;
+        String age = df.format(age_min);
         String s = "Last known location:" +
                 "\nLatitude, Longitude: " + mLat + ", " + mLong +
                 "\nRadius:" + mRadius +
-                "\nAge: "+ age_min + " minutes ago.";
+                "\nAge: "+ age + " minutes ago.";
         ((SMSListener)mContext).replyToSender(s,null);
     }
 
