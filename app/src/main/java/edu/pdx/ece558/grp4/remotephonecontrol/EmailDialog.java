@@ -39,7 +39,7 @@ public class EmailDialog extends DialogFragment {
         edittext_email = (EditText) v.findViewById(R.id.edittext_email);
 
         // Wire up the EditText for email account password
-        edittext_email = (EditText) v.findViewById(R.id.edittext_password);
+        edittext_password = (EditText) v.findViewById(R.id.edittext_password);
 
         // Create title for the dialog window
         builder.setView(v).setTitle(R.string.title_email_dialog);
