@@ -67,7 +67,7 @@ public class SMSListener extends Service {
         mEmailResponse = settings.getBoolean("EmailControl", false);
         mRemoteLocation = settings.getBoolean("RemoteLocation", false);
         //also get password and email
-        mKeyword = "hearMe!";
+        mKeyword = "HearMe!";
         mMyEmail = "francisco1591@gmail.com";
         mPassword = "iha.sari";
 //        mContext = this;
@@ -142,17 +142,17 @@ public class SMSListener extends Service {
     public void handleRequest (String words [] , int j){
         String command = words[j+1];
         switch (command){
-            case "locate":
+            case "find": case "Find":
                 mSubject = "Response to location request";
                 getLocation();
                 break;
-            case "picture": {
+            case "picture": case "Picture": {
                 if (mSender.indexOf('@') < 0) // sender is phone
                     break; // only email supported for picture
                 mSubject = "Response to picture request";
                 boolean frontCamera = true; // default
                 // check for back camera option
-                if (words.length > j+2)  {
+                if (words.length > j+2 )  {
                     if (words[j+2].equals("back"))
                         frontCamera = false;
                 }
@@ -160,21 +160,22 @@ public class SMSListener extends Service {
                 pic.takePic();
                 break;
             }
-            case "call":
+            case "call": case "Call":
                 if (mSender.indexOf('@') < 0) // sender is phone
                     makeCall(mSender);
-                else if(words[j+2] != null)// sender is email address, option includes phone num
+                    // else sender is email address, validate phone num
+                else if(words.length > j+2 && words[j+2].matches("\\d{10}"))
                     makeCall(words[j+2]);
                 break;
-            case "alert":
-               int duration;
-                if (words[j+2] != null) {
-                    duration = Integer.parseInt( words[j+2] ); // play for duration seconds
-                } else {
-                    duration = 5;  // default 5 s
+            case "alert": case "Alert": {
+                int duration = 5; //default, seconds
+                // check if duration option included
+                if (words.length > j + 2 && words[j+2].matches("\\d+")) {
+                    duration = Integer.parseInt(words[j + 2]); // play for duration seconds
                 }
                 soundAlert(duration);
                 break;
+            }
             default:
                 return;
         }
@@ -258,7 +259,7 @@ public class SMSListener extends Service {
             public void run () {
                 try {
                     Thread.sleep(10000);
-                    if (loc.mLocAttempts == 0) {
+                    if (!loc.mFoundLocation) {
                         loc.getLastKnownLocation();
                     }
                 } catch (InterruptedException e) {

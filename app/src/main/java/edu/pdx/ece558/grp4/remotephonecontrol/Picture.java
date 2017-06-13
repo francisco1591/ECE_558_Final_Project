@@ -73,6 +73,7 @@ public class Picture {
             String s = mFrontBack + " jpeg quality : " + quality;
             Log.i(TAG,s);
             params.setJpegQuality(100);
+            params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
             camera.setParameters(params);
             camera.startPreview();
             camera.autoFocus(new Camera.AutoFocusCallback() {

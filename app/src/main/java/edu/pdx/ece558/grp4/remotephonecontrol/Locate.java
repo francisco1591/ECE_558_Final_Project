@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +36,7 @@ public class Locate {
     long mTime0; // Time stamp of initial location attempt (ms)
     long mLocElapsedTime; // ms since initial Location attempt
     int mLocAttempts;
+    boolean mFoundLocation;
     Context mContext;
 
     public Locate(Context context, double timeout, int radius) {
@@ -52,6 +54,7 @@ public class Locate {
             // Called when a new location is found
             public void onLocationChanged(Location location) {
                 String s;
+                mFoundLocation = true;
                 // if first attempt
                 if (mLocAttempts == 0) {
                     mTime0 = (long) (location.getElapsedRealtimeNanos() / 1e6);
@@ -67,8 +70,7 @@ public class Locate {
                     stopLocationUpdates();
                     saveLocation(location);
                     s = "New location:" +
-                            "\nLatitude:" + mLat +
-                            "\nLongitude:" + mLong +
+                            "\nLatitude, Longitude: " + mLat + ", " + mLong +
                             "\nRadius:" + mRadius +
                             "\nTime:" + mLocElapsedTime / 1000.0;
                     ((SMSListener)mContext).replyToSender(s,null);
@@ -93,10 +95,11 @@ public class Locate {
         }  catch (SecurityException sex) {
             Log.e(TAG, "Error creating location service: " + sex.getMessage());
         }
+        double age_min = (SystemClock.elapsedRealtimeNanos()-mBestLocation.getElapsedRealtimeNanos() ) / 60.0e9;
         String s = "Last known location:" +
-                "\nLatitude:" + mLat +
-                "\nLongitude:" + mLong +
-                "\nRadius:" + mRadius ;
+                "\nLatitude, Longitude: " + mLat + ", " + mLong +
+                "\nRadius:" + mRadius +
+                "\nAge: "+ age_min + " minutes ago.";
         ((SMSListener)mContext).replyToSender(s,null);
     }
 
@@ -115,19 +118,19 @@ public class Locate {
 
     // Get device location
     public void getLocationUpdates() {
-        // Acquire a reference to the system Location Manager
-            try {
-                boolean isGPSEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                boolean isNetworkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-                // Register the listener with the Location Manager to receive location updates
-                if (isNetworkEnabled) {
-                    lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLL);
-                }
-                if (isGPSEnabled) {
-                    lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLL);
-                }
-            } catch (SecurityException sex) {
-                Log.e(TAG, "Error creating location service: " + sex.getMessage());
+        mFoundLocation = false;
+        try {
+            boolean isGPSEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            boolean isNetworkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            // Register the listener with the Location Manager to receive location updates
+            if (isNetworkEnabled) {
+                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLL);
             }
+            if (isGPSEnabled) {
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLL);
+            }
+        } catch (SecurityException sex) {
+            Log.e(TAG, "Error creating location service: " + sex.getMessage());
+        }
     }
 }

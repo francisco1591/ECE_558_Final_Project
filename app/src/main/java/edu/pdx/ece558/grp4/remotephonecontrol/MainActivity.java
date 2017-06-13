@@ -24,7 +24,7 @@ public class MainActivity extends FragmentActivity
         EmailDialog.EmailDialogListener {
 
     // Tag to identify this activity in logcat
-    private static final String TAG = "RemotePhoneControl";
+    private static final String TAG = "SpyOnMe";
 
     // Constant IDs for passing arguments to DescriptionDialog
     public static final int ID_SMS = 0;
@@ -441,7 +441,7 @@ public class MainActivity extends FragmentActivity
                     Toast.makeText(getApplicationContext(), "SMS permission required, please try again.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-            }
+            } break;
 
             case REQUEST_SMS_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -450,7 +450,7 @@ public class MainActivity extends FragmentActivity
                     Toast.makeText(getApplicationContext(), "SMS permission required, please try again.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-            }
+            } break;
 
             case REQUEST_FINE_LOCATION_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -459,7 +459,7 @@ public class MainActivity extends FragmentActivity
                     Toast.makeText(getApplicationContext(), "Location permission required, please try again.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-            }
+            } break;
 
             case REQUEST_CALL_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
@@ -468,7 +468,7 @@ public class MainActivity extends FragmentActivity
                     Toast.makeText(getApplicationContext(), "Call permission required, please try again.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-            }
+            } break;
 
             case REQUEST_CAMERA_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -477,7 +477,7 @@ public class MainActivity extends FragmentActivity
                     Toast.makeText(getApplicationContext(), "Camera permission required, please try again.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-            }
+            } break;
 
             case REQUEST_EXT_STORAGE_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -486,7 +486,7 @@ public class MainActivity extends FragmentActivity
                     Toast.makeText(getApplicationContext(), "External storage permission required, please try again.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-            }
+            } break;
 
         } // switch
     } // onRequestPermissionsResult
