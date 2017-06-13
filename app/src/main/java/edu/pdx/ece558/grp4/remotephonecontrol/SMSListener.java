@@ -229,6 +229,8 @@ public class SMSListener extends Service {
                 // check if duration option included
                 if (words.length > j + 2 && words[j+2].matches("\\d+")) {
                     duration = Integer.parseInt(words[j + 2]); // play for duration seconds
+                    if (duration > 25 ) // don't want to hear alarm forever
+                        duration = 25;
                 }
                 soundAlert(duration);
                 break;

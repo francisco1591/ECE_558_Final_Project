@@ -39,8 +39,10 @@ public class Locate {
     long mLocElapsedTime; // ms since initial Location attempt
     int mLocAttempts;
     boolean mFoundLocation;
+    long mStartTime;
     Context mContext;
 
+    // Contructor, timeout in seconds, desired radius of accuracy in meters
     public Locate(Context context, double timeout, int radius) {
         mContext = context;
         LocTimeOut = timeout;
@@ -71,10 +73,11 @@ public class Locate {
                         (location.hasAccuracy() && location.getAccuracy() <= MinLocAccuracy)) {
                     stopLocationUpdates();
                     saveLocation(location);
+                    long timeToFind = mTime0 - mStartTime + mLocElapsedTime;
                     s = "New location:" +
                             "\nLatitude, Longitude: " + mLat + ", " + mLong +
-                            "\nRadius:" + mRadius +
-                            "\nTime:" + mLocElapsedTime / 1000.0;
+                            "\nRadius: " + mRadius + " meters" +
+                            "\nTime to locate: " + timeToFind / 1000.0 + " s";
                     ((SMSListener)mContext).replyToSender(s,null);
                 }
             }
@@ -102,7 +105,7 @@ public class Locate {
         String age = df.format(age_min);
         String s = "Last known location:" +
                 "\nLatitude, Longitude: " + mLat + ", " + mLong +
-                "\nRadius:" + mRadius +
+                "\nRadius: " + mRadius + " meters" +
                 "\nAge: "+ age + " minutes ago.";
         ((SMSListener)mContext).replyToSender(s,null);
     }
@@ -133,6 +136,7 @@ public class Locate {
             if (isGPSEnabled) {
                 lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLL);
             }
+            mStartTime = (long) (SystemClock.elapsedRealtimeNanos() / 1e6);
         } catch (SecurityException sex) {
             Log.e(TAG, "Error creating location service: " + sex.getMessage());
         }
