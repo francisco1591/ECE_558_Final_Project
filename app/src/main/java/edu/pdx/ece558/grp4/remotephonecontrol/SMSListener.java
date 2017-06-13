@@ -92,7 +92,7 @@ public class SMSListener extends Service {
         mPassword = settings.getString("Password", "");
 
         // Let it continue running until it is stopped.
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
         // Register receiver dynamically to access class instance members
         IntentFilter filter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
         receiveSMS = new ReceiveSMS();
@@ -123,7 +123,7 @@ public class SMSListener extends Service {
         super.onDestroy();
         go = false;
         unregisterReceiver(receiveSMS);
-        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_SHORT).show();
     }
 
     // Inner class for Broadcast Receiver
@@ -140,7 +140,7 @@ public class SMSListener extends Service {
                         SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
                         mSender = currentMessage.getDisplayOriginatingAddress();
                         mMessage = currentMessage.getDisplayMessageBody();
-                        int duration = Toast.LENGTH_LONG;
+                        int duration = Toast.LENGTH_SHORT;
                         Toast toast = Toast.makeText(context,
                                 "senderNum: " + mSender + ", message: " + mMessage, duration);
                         toast.show();

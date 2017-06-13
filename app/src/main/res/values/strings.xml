@@ -91,4 +91,11 @@
     <string name="actionbtn_set">Set</string>
     <string name="actionbtn_cancel">Cancel</string>
 
+    Strings for HomeActivity
+
+    <string name="title_homeactivity">SpyOnMe!</string>
+    <string name="name_author1">Francisco Garibay Lopez</string>
+    <string name="name_author2">Rehan Iqbal</string>
+    <string name="button_keyword">Enter Keyword</string>
+
 </resources>
