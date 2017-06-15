@@ -24,7 +24,6 @@ import android.widget.Toast;
 
 import java.text.DecimalFormat;
 
-// Rehan adding a test comment for pushing demo
 public class Locate {
     private static final String TAG = "LocateClass";
     private double LocTimeOut; //location timeout ms
@@ -37,9 +36,9 @@ public class Locate {
     float mRadius; // Accuracy 68% radius, in meters
     long mTime0; // Time stamp of initial location attempt (ms)
     long mLocElapsedTime; // ms since initial Location attempt
-    int mLocAttempts;
+    int mLocAttempts; // number of location attempts so far
     boolean mFoundLocation;
-    long mStartTime;
+    long mStartTime; // time stamp of initial location request
     Context mContext;
 
     // Contructor, timeout in seconds, desired radius of accuracy in meters
@@ -62,12 +61,14 @@ public class Locate {
                 // if first attempt
                 if (mLocAttempts == 0) {
                     mTime0 = (long) (location.getElapsedRealtimeNanos() / 1e6);
+                    saveLocation(location);
+                // else save only if location has better accuracy
+                } else if (location.getAccuracy() < mBestLocation.getAccuracy()) {
+                    saveLocation(location);
                 }
                 mLocElapsedTime = (long) (location.getElapsedRealtimeNanos() / 1e6) - mTime0;
                 mLocAttempts++;
-                if (mBestLocation != null && location.getAccuracy() < mBestLocation.getAccuracy()) {
-                    saveLocation(location);
-                }
+
                 // If found accurate location or timed out, stop listener and store location
                 if (mLocElapsedTime > LocTimeOut ||
                         (location.hasAccuracy() && location.getAccuracy() <= MinLocAccuracy)) {
@@ -123,7 +124,7 @@ public class Locate {
         mLocAttempts = 0; // reset attempts
     }
 
-    // Get device location
+    // Request device location
     public void getLocationUpdates() {
         mFoundLocation = false;
         try {

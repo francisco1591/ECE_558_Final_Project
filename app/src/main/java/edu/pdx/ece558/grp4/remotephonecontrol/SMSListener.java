@@ -92,7 +92,7 @@ public class SMSListener extends Service {
         mPassword = settings.getString("Password", "");
 
         // Let it continue running until it is stopped.
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
         // Register receiver dynamically to access class instance members
         IntentFilter filter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
         receiveSMS = new ReceiveSMS();
@@ -123,7 +123,7 @@ public class SMSListener extends Service {
         super.onDestroy();
         go = false;
         unregisterReceiver(receiveSMS);
-        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_SHORT).show();
     }
 
     // Inner class for Broadcast Receiver
@@ -179,12 +179,14 @@ public class SMSListener extends Service {
                     if (words.length <= j + 2) // Didn't provide carrier parameter
                         return;
                     else {
+                        if( !mSender.matches("\\d{10}") ) // get only last 10 digits if +1 included
+                            mSender = mSender.substring(mSender.length()-10);
                         mGateway = mSender + MMSgateway.get(words[j+2]);
                     }
                     if (words.length > j + 3) {
                         if (words[j + 3].equals("back")) { //checks for back camera option
                             frontCamera = false;
-                            if (words.length > j + 4) { // if flash on, only on back camera
+                            if (words.length > j + 4) { // flash available on back camera only (usually)
                                 if (words[j + 4].equals("flash"))
                                     flash = true;
                             }
@@ -245,10 +247,11 @@ public class SMSListener extends Service {
             Thread delay = new Thread () {
                 public void run (){
                     AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-                    // save ringer mode so we restore it in the end
+                    // save ringer mode so we can restore it in the end
                     int mode = am.getRingerMode();
+                    int volume = am.getStreamVolume(AudioManager.STREAM_RING);
                     am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-                    am.setStreamVolume (AudioManager.STREAM_ALARM,am.getStreamMaxVolume(AudioManager.STREAM_ALARM),0);
+                    am.setStreamVolume (AudioManager.STREAM_RING,am.getStreamMaxVolume(AudioManager.STREAM_RING),0);
                     Uri alarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
                     Ringtone alert = RingtoneManager.getRingtone(getApplicationContext(), alarm);
                     alert.play();
@@ -258,8 +261,9 @@ public class SMSListener extends Service {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    // Restore ringer mode
+                    // Restore ringer mode & volume
                     am.setRingerMode(mode);
+                    am.setStreamVolume(AudioManager.STREAM_RING, volume, 0);
                 }
             };
             delay.start();
@@ -322,8 +326,8 @@ public class SMSListener extends Service {
         Thread checkLoc = new Thread () {
             public void run () {
                 try {
-                    Thread.sleep(10000);
-                    if (!loc.mFoundLocation) {
+                    Thread.sleep(15000);
+                    if (!loc.mFoundLocation) { // didn't find location, return last known
                         loc.getLastKnownLocation();
                     }
                 } catch (InterruptedException e) {
