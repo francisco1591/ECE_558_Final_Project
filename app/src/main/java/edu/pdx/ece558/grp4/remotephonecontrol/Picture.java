@@ -10,7 +10,9 @@ import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.io.File;
@@ -27,6 +29,7 @@ public class Picture {
     private int mCamFacing;
     private String mFrontBack;
     private boolean mFlash;
+    private int mRotation;
 
     // Constructor
     public Picture (Context context, boolean frontCamera) {
@@ -56,6 +59,7 @@ public class Picture {
             String s = "Camera not found, ID: "+cameraID;
             Toast.makeText(mContext, s, Toast.LENGTH_LONG).show();
         }
+        getCameraRotation(cameraID, camera );
     }
 
     private void releaseCamera() {
@@ -82,6 +86,8 @@ public class Picture {
             params.setJpegQuality(100);
             params.setPreviewSize(1280, 720);
             params.setPictureSize(1280, 720);
+           // mRotation = 270;
+            params.setRotation(mRotation);
             List<String> flashModes = params.getSupportedFlashModes();
             if (mFlash && flashModes.contains(android.hardware.Camera.Parameters.FLASH_MODE_ON))
             {
@@ -106,6 +112,32 @@ public class Picture {
             });
 
         }
+    }
+
+    public void getCameraRotation( int cameraId, android.hardware.Camera camera) {
+        android.hardware.Camera.CameraInfo info =
+                new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(cameraId, info);
+        WindowManager windowService = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        int rotation = windowService.getDefaultDisplay().getRotation();
+
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0: degrees = 0; break;
+            case Surface.ROTATION_90: degrees = 90; break;
+            case Surface.ROTATION_180: degrees = 180; break;
+            case Surface.ROTATION_270: degrees = 270; break;
+        }
+
+        int result;
+        if (mFrontBack.equals("front")) {
+            result = (info.orientation + degrees) % 360;
+            //result = (360 - result) % 360;  // compensate the mirror
+        } else {  // back-facing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        //camera.setDisplayOrientation(0);
+        mRotation = result;
     }
 
     public void savePicture(byte[] data) {
