@@ -160,7 +160,7 @@ public class SMSListener extends Service {
     public void handleRequest (String words [] , int j){
         // force lowercase in case
         for (int i=0; i < words.length; i++){
-            words[i].toLowerCase();
+            words[i] = words[i].toLowerCase();
         }
         String command = words[j+1];
         switch (command){
