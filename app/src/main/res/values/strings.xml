@@ -57,7 +57,7 @@
     <string name="syntax_SMS">Syntax: \n&lt;Keyword&gt; command [option1 [option2]]</string>
     <!--<string name="syntax_Email">Syntax: &lt;Keyword&gt; email</string>-->
     <string name="syntax_Location">Syntax: &lt;Keyword&gt; find</string>
-    <string name="syntax_Phone">Syntax text from phone: \n&lt;Keyword&gt; call [1112223333] \n
+    <string name="syntax_Phone">Syntax text from phone: \n&lt;Keyword&gt; call \n
         Syntax text from email: \n&lt;Keyword&gt;  call 11122233331
     </string>
     <string name="syntax_Sound">Syntax: &lt;Keyword&gt; alert [15] \n
@@ -74,7 +74,8 @@
     <string name="permission_Location">Permissions: requires GPS services</string>
     <string name="permission_Phone">Permissions: requires Phone services</string>
     <string name="permission_Sound">Permissions: requires no services</string>
-    <string name="permission_Picture">Permissions: requires Camera services</string>
+    <string name="permission_Picture">Permissions: requires Camera services and Reply to Email
+            option enabled</string>
 
     <!--Strings for KeywordDialog-->
 
