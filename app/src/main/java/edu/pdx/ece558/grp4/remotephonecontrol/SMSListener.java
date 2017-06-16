@@ -65,18 +65,7 @@ public class SMSListener extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
-    private static final String description_EmailResponse = "Enabling this option allows you" +
-            "to text your phone from an email account via an SMS Gateway," +
-            "sending an email to the address 1234567890@carrierDomain.com, where the numbers to" +
-            "the left of @ are your 10-digit phone number and the domain is specific to your " +
-            "phone carrier. Your phone will then automatically reply to the sender email address." +
-            " You will need to provide login credentials to a Gmail account, " +
-            "which will be used to send the response email on behalf of your phone." +
-            "IMPORTANT: You also need to authorize external access to your Gmail account" +
-            " by enabling “less secure apps” in settings:" +
-            " https://www.google.com/settings/security/lesssecureapps " +
-            "before this feature will work. You can create a dummy gmail account if you don't " +
-            "feel comfortable authorizing external access to your personal account.";
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
@@ -114,7 +103,7 @@ public class SMSListener extends Service {
                 }
             }
         };
-        thread.start();
+       // thread.start();
         return START_STICKY;
     }
 
