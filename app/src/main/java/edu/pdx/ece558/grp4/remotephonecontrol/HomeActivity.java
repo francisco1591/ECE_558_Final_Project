@@ -11,7 +11,7 @@ import android.support.v4.app.*;
 import android.view.View;
 import android.widget.*;
 
-import static edu.pdx.ece558.grp4.remotephonecontrol.MainActivity.EXTRA_KEYWORD;
+//import static edu.pdx.ece558.grp4.remotephonecontrol.MainActivity.EXTRA_KEYWORD;
 
 
 public class HomeActivity extends FragmentActivity
@@ -56,7 +56,7 @@ public class HomeActivity extends FragmentActivity
                     // Start the MainActivity if keyword is blank
                     // i.e. if user is starting service for first time
                     Intent i = new Intent(HomeActivity.this, MainActivity.class);
-                    startActivityForResult(i, ACTIVITY_MAIN);
+                    startActivity(i);
                 }
 
                 else {
@@ -70,6 +70,15 @@ public class HomeActivity extends FragmentActivity
 
     } // onCreate
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        // restore the previous keyword (if it exists)
+        // otherwise, set keyword to empty
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        mKeyword = settings.getString("Keyword", "");
+    }
+
     ////////////////////////////
     // onKeywordPositiveClick //
     ////////////////////////////
@@ -81,7 +90,9 @@ public class HomeActivity extends FragmentActivity
         if (userResponse.equals(mKeyword)) {
             // start the MainActivity if keyword validates correctly
             Intent i = new Intent(HomeActivity.this, MainActivity.class);
-            startActivityForResult(i, ACTIVITY_MAIN);
+//            startActivityForResult(i, ACTIVITY_MAIN);
+            startActivity(i);
+
         }
 
         else {
@@ -93,14 +104,14 @@ public class HomeActivity extends FragmentActivity
     // onActivityResult //
     //////////////////////
 
-    // check the current keyword value
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == ACTIVITY_MAIN) {
-            if (data == null) return;
-            else {mKeyword = data.getStringExtra(MainActivity.EXTRA_KEYWORD);}
-        }
-    } // onActivityResult
+//    // check the current keyword value
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//
+//        if (requestCode == ACTIVITY_MAIN) {
+//            if (data == null) return;
+//            else {mKeyword = data.getStringExtra(MainActivity.EXTRA_KEYWORD);}
+//        }
+//    } // onActivityResult
 
 } // HomeActivity
