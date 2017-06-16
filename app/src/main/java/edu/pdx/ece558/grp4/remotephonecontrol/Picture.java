@@ -1,9 +1,10 @@
 package edu.pdx.ece558.grp4.remotephonecontrol;
 
-/**
- * Created by Francisco on 6/11/2017.
- * This class adapted from http://www.vogella.com/tutorials/AndroidCamera/article.html
- */
+// This class adapted from http://www.vogella.com/tutorials/AndroidCamera/article.html
+
+/////////////////////
+// Android Imports //
+/////////////////////
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
@@ -11,16 +12,25 @@ import android.hardware.Camera;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Surface;
-import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+//////////////////
+// Java Imports //
+//////////////////
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+/////////////
+// Picture //
+/////////////
+
 public class Picture {
+
+    // Private members
     private static final String TAG = "PictureClass";
     private Camera camera;
     private Context mContext;
@@ -31,21 +41,34 @@ public class Picture {
     private boolean mFlash;
     private int mRotation;
 
-    // Constructor
+    /////////////////
+    // Constructor //
+    /////////////////
+
     public Picture (Context context, boolean frontCamera) {
+
         mContext = context;
         mSurfTx = new SurfaceTexture(0);
         mCamFacing = frontCamera ? Camera.CameraInfo.CAMERA_FACING_FRONT
                 : Camera.CameraInfo.CAMERA_FACING_BACK;
         mFrontBack = frontCamera ? "front" : "back";
-    }
 
-    // Setter
+    } // Picture
+
+    //////////////
+    // setFlash //
+    //////////////
+
     public void setFlash(boolean flash) {
         mFlash = flash;
-    }
+    } // setFlash
+
+    ////////////////
+    // openCamera //
+    ////////////////
 
     // Check if camera found and open
+
     public void openCamera(int cameraID) {
         if (cameraID >=0)
             try {
@@ -60,7 +83,12 @@ public class Picture {
             Toast.makeText(mContext, s, Toast.LENGTH_LONG).show();
         }
         getCameraRotation(cameraID, camera );
-    }
+
+    } // openCamera
+
+    ///////////////////
+    // releaseCamera //
+    ///////////////////
 
     private void releaseCamera() {
         if (camera != null) {
@@ -68,9 +96,14 @@ public class Picture {
             camera.release();
             camera = null;
         }
-    }
+    } // releaseCamera
+
+    /////////////
+    // takePic //
+    /////////////
 
     // Take pictures with both front and back cameras
+
     public void takePic() {
         openCamera(findCamera());
         if (camera != null) {
@@ -98,30 +131,47 @@ public class Picture {
             camera.setParameters(params);
             camera.startPreview();
             camera.autoFocus(new Camera.AutoFocusCallback() {
+
+                /////////////////
+                // onAutoFocus //
+                /////////////////
+
                 public void onAutoFocus(boolean success, Camera camera) {
                     if(success){
                         camera.takePicture(null, null, new Camera.PictureCallback() {
+
+                            ////////////////////
+                            // onPictureTaken //
+                            ////////////////////
+
                             @Override
                             public void onPictureTaken(byte[] data, Camera camera) {
                                 savePicture(data);
                                 releaseCamera();
                                 ((SMSListener)mContext).replyToSender("Your picture request",mFilename);
-                            }
-                        });                    }
-                }
-            });
+                            } // onPictureTaken
+                        }); // PictureCallback
+                    }
+                } // onAutoFocus
+            }); // AutoFocusCallback
 
         }
-    }
+    } // takePic
+
+    ///////////////////////
+    // getCameraRotation //
+    ///////////////////////
 
     public void getCameraRotation( int cameraId, android.hardware.Camera camera) {
+
         android.hardware.Camera.CameraInfo info =
                 new android.hardware.Camera.CameraInfo();
         android.hardware.Camera.getCameraInfo(cameraId, info);
         WindowManager windowService = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        int rotation = windowService.getDefaultDisplay().getRotation();
 
+        int rotation = windowService.getDefaultDisplay().getRotation();
         int degrees = 0;
+
         switch (rotation) {
             case Surface.ROTATION_0: degrees = 0; break;
             case Surface.ROTATION_90: degrees = 90; break;
@@ -138,9 +188,15 @@ public class Picture {
         }
         //camera.setDisplayOrientation(0);
         mRotation = result;
-    }
+
+    } // getCameraRotation
+
+    /////////////////
+    // savePicture //
+    /////////////////
 
     public void savePicture(byte[] data) {
+
         File pictureFileDir = getDir();
 
         if (!pictureFileDir.exists() && !pictureFileDir.mkdirs()) {
@@ -162,14 +218,24 @@ public class Picture {
             Log.d(TAG, "File" + mFilename + "not saved: " + error.getMessage());
             Toast.makeText(mContext, "Image could not be saved.",Toast.LENGTH_LONG).show();
         }
-    }
+
+    } // savePicture
+
+    ////////////
+    // getDir //
+    ////////////
 
     private File getDir() {
         File sdDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         return new File(sdDir, "SpyOnMe");
-    }
+    } // getDir
+
+    ////////////////
+    // findCamera //
+    ////////////////
 
     private int findCamera() {
+
         int cameraId = -1;
         // Search for the front facing camera
         int numberOfCameras = Camera.getNumberOfCameras();
@@ -183,5 +249,6 @@ public class Picture {
             }
         }
         return cameraId;
-    }
-}
+    } // findCamera
+
+} // Picture

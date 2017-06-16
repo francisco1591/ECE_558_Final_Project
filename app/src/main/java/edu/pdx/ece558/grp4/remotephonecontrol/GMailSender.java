@@ -1,11 +1,10 @@
 package edu.pdx.ece558.grp4.remotephonecontrol;
 
-/**
- * Created by Francisco on 6/9/2017.
- */
-/* Adapted from https://medium.com/@ssaurel/how-to-send-an-email-with-javamail-api-in-android-2fc405441079
-*
- */
+//Adapted from https://medium.com/@ssaurel/how-to-send-an-email-with-javamail-api-in-android-2fc405441079
+
+/////////////////////
+// Android Imports //
+/////////////////////
 
 import java.security.Security;
 import java.util.Properties;
@@ -13,6 +12,7 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.Multipart;
@@ -24,8 +24,13 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+/////////////////
+// GMailSender //
+/////////////////
 
 public class GMailSender extends javax.mail.Authenticator {
+
+    // Private members
     private String mailhost = "smtp.gmail.com";
     private String user;
     private String password;
@@ -34,6 +39,10 @@ public class GMailSender extends javax.mail.Authenticator {
     static {
         Security.addProvider(new JSSEProvider());
     }
+
+    /////////////////
+    // Constructor //
+    /////////////////
 
     public GMailSender(String user, String password) {
         this.user = user;
@@ -50,11 +59,20 @@ public class GMailSender extends javax.mail.Authenticator {
         props.setProperty("mail.smtp.quitwait", "false");
 
         session = Session.getDefaultInstance(props, this);
-    }
+
+    } // Constructor
+
+    ///////////////////////////////
+    // getPasswordAuthentication //
+    ///////////////////////////////
 
     protected PasswordAuthentication getPasswordAuthentication() {
         return new PasswordAuthentication(user, password);
-    }
+    } // getPasswordAuthentication
+
+    //////////////
+    // sendMail //
+    //////////////
 
     public synchronized void sendMail(String subject, String body,
                                       String sender, String recipients, String filename) throws Exception {
@@ -86,5 +104,6 @@ public class GMailSender extends javax.mail.Authenticator {
         // Send message
         Transport.send(message);
 
-    }
-}
+    } // sendMail
+
+} // GMailSender

@@ -27,7 +27,7 @@ public class MainActivity extends FragmentActivity
         EmailDialog.EmailDialogListener {
 
     // Tag to identify this activity in logcat
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "SpyOnMe.MainActivity";
 
     // Constant IDs for passing arguments to DescriptionDialog
     public static final int ID_SMS = 0;

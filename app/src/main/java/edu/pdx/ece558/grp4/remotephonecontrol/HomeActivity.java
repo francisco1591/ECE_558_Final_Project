@@ -11,9 +11,6 @@ import android.support.v4.app.*;
 import android.view.View;
 import android.widget.*;
 
-//import static edu.pdx.ece558.grp4.remotephonecontrol.MainActivity.EXTRA_KEYWORD;
-
-
 public class HomeActivity extends FragmentActivity
         implements KeywordDialog.KeywordDialogListener {
 
@@ -22,9 +19,6 @@ public class HomeActivity extends FragmentActivity
 
     // File to save SharedPreferences in
     public static final String PREFS_NAME ="RemotePhoneControl";
-
-    // extra data being passed from HomeActivity --> QuizActivity
-    private static final int ACTIVITY_MAIN = 3;
 
     // Private members
     String mKeyword;
@@ -70,6 +64,10 @@ public class HomeActivity extends FragmentActivity
 
     } // onCreate
 
+    //////////////
+    // onResume //
+    //////////////
+
     @Override
     public void onResume(){
         super.onResume();
@@ -90,7 +88,6 @@ public class HomeActivity extends FragmentActivity
         if (userResponse.equals(mKeyword)) {
             // start the MainActivity if keyword validates correctly
             Intent i = new Intent(HomeActivity.this, MainActivity.class);
-//            startActivityForResult(i, ACTIVITY_MAIN);
             startActivity(i);
 
         }
@@ -99,19 +96,5 @@ public class HomeActivity extends FragmentActivity
             Toast.makeText(getApplicationContext(),"Incorrect keyword!", Toast.LENGTH_SHORT).show();
         }
     } // onKeywordPositiveClick
-
-    //////////////////////
-    // onActivityResult //
-    //////////////////////
-
-//    // check the current keyword value
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//
-//        if (requestCode == ACTIVITY_MAIN) {
-//            if (data == null) return;
-//            else {mKeyword = data.getStringExtra(MainActivity.EXTRA_KEYWORD);}
-//        }
-//    } // onActivityResult
 
 } // HomeActivity

@@ -1,30 +1,26 @@
 package edu.pdx.ece558.grp4.remotephonecontrol;
 
-/**
- * Created by Francisco on 6/9/2017.
- */
+/////////////////////
+// Android Imports //
+/////////////////////
 
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.SystemClock;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.DecimalFormat;
 
+////////////
+// Locate //
+////////////
+
 public class Locate {
+
+    // Private members
     private static final String TAG = "LocateClass";
     private double LocTimeOut; //location timeout ms
     private int MinLocAccuracy; // min accuracy radius in meters
@@ -41,15 +37,26 @@ public class Locate {
     long mStartTime; // time stamp of initial location request
     Context mContext;
 
-    // Contructor, timeout in seconds, desired radius of accuracy in meters
+    /////////////////
+    // Constructor //
+    /////////////////
+
+    // timeout in seconds, desired radius of accuracy in meters
+
     public Locate(Context context, double timeout, int radius) {
+
         mContext = context;
         LocTimeOut = timeout;
         MinLocAccuracy = radius;
         mLocAttempts = 0;
         lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         addListener();
-    }
+
+    } // Constructor
+
+    /////////////////
+    // addListener //
+    /////////////////
 
     public void addListener() {
         // Define a listener that responds to location updates
@@ -81,18 +88,24 @@ public class Locate {
                             "\nTime to locate: " + timeToFind / 1000.0 + " s";
                     ((SMSListener)mContext).replyToSender(s,null);
                 }
-            }
+
+            } // onLocationChanged
 
             public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
+            } // onStatusChanged
 
             public void onProviderEnabled(String provider) {
-            }
+            } // onProviderEnabled
 
             public void onProviderDisabled(String provider) {
-            }
+            } // onProviderDisabled
         };
-    }
+
+    } // addListener
+
+    /////////////////////////
+    // getLastKnowLocation //
+    /////////////////////////
 
     public void getLastKnownLocation() {
         DecimalFormat df = new DecimalFormat("#.##");
@@ -109,22 +122,36 @@ public class Locate {
                 "\nRadius: " + mRadius + " meters" +
                 "\nAge: "+ age + " minutes ago.";
         ((SMSListener)mContext).replyToSender(s,null);
-    }
+
+    } // getLastKnowLocation
+
+    //////////////////
+    // saveLocation //
+    //////////////////
 
     private void saveLocation(Location location) {
         mBestLocation = location;
         mLong = location.getLongitude();
         mLat = location.getLatitude();
         mRadius = location.getAccuracy();
-    }
+    } // saveLocation
+
+    /////////////////////////
+    // stopLocationUpdates //
+    /////////////////////////
 
     // Stop location updates and reset attempts
     private void stopLocationUpdates() {
         lm.removeUpdates(mLL);
         mLocAttempts = 0; // reset attempts
-    }
+    } // stopLocationUpdates
+
+    ////////////////////////
+    // getLocationUpdates //
+    ////////////////////////
 
     // Request device location
+
     public void getLocationUpdates() {
         mFoundLocation = false;
         try {
@@ -141,5 +168,6 @@ public class Locate {
         } catch (SecurityException sex) {
             Log.e(TAG, "Error creating location service: " + sex.getMessage());
         }
-    }
-}
+    } // getLocationUpdates
+
+} // Locate
