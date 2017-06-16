@@ -158,9 +158,13 @@ public class SMSListener extends Service {
     }
 
     public void handleRequest (String words [] , int j){
+        // force lowercase in case
+        for (int i=0; i < words.length; i++){
+            words[i].toLowerCase();
+        }
         String command = words[j+1];
         switch (command){
-            case "find": case "Find":
+            case "find":
                 // check if feature enabled, and email enabled in case of email sender
                 if (!mRemoteLocation || (mSender.indexOf('@') > 0 && !mEmailResponse) )
                     return;
@@ -168,7 +172,7 @@ public class SMSListener extends Service {
 
                 getLocation();
                 break;
-            case "pic": case "Pic": {
+            case "pic":  {
                 // check if feature enabled
                 if (!mTakePicture)
                     return;
@@ -213,7 +217,7 @@ public class SMSListener extends Service {
                 pic.takePic();
                 break;
             }
-            case "call": case "Call":
+            case "call":
                 // check if feature enabled
                 if (!mPhoneResponse)
                     return;
@@ -223,7 +227,7 @@ public class SMSListener extends Service {
                 else if(words.length > j+2 && words[j+2].matches("\\d{10}"))
                     makeCall(words[j+2]);
                 break;
-            case "alert": case "Alert": {
+            case "alert":  {
                 // check if feature enabled
                 if (!mPlaySound)
                     return;
